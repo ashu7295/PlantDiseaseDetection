@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Plant Disease Detection</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #f8f9fa;
+            min-height: 100vh;
+        }
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .navbar-brand {
+            color: #4CAF50 !important;
+            font-weight: 600;
+            font-size: 1.5rem;
+        }
+        .nav-link {
+            color: #2c3e50 !important;
+            font-weight: 500;
+        }
+        .nav-link:hover {
+            color: #4CAF50 !important;
+        }
+        .main-container {
+            padding: 40px 0;
+        }
+        .upload-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            margin-bottom: 40px;
+        }
+        .upload-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .upload-header h1 {
+            color: #2c3e50;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        .upload-header p {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+        .form-control {
+            border-radius: 10px;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            margin-bottom: 20px;
+        }
+        .form-control:focus {
+            border-color: #4CAF50;
+            box-shadow: none;
+        }
+        .btn-analyze {
+            background: #4CAF50;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+        .btn-analyze:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+        .result-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            margin-top: 40px;
+            display: none;
+        }
+        .result-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .result-header h2 {
+            color: #2c3e50;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        .result-content {
+            text-align: center;
+        }
+        .result-image {
+            max-width: 300px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .confidence-bar {
+            height: 20px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+        .confidence-fill {
+            height: 100%;
+            background: #4CAF50;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+        .confidence-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #4CAF50;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+            display: none;
+        }
+        .features-section {
+            padding: 60px 0;
+            background: white;
+            margin: 40px 0;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        .feature-card {
+            text-align: center;
+            padding: 30px;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        .feature-icon {
+            font-size: 2.5rem;
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+        .about-section {
+            background: white;
+            padding: 60px 0;
+            margin: 40px 0;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        .user-profile {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+        }
+        .profile-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: #4CAF50;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin: 0 auto 20px;
+        }
+        .history-section {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+        }
+        .history-item {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        .footer {
+            background: white;
+            padding: 40px 0;
+            margin-top: 60px;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .footer-link {
+            color: #2c3e50;
+            text-decoration: none;
+            margin: 0 15px;
+        }
+        .footer-link:hover {
+            color: #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-leaf me-2"></i>Plant Disease Detection
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#features">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#history">History</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">
+                            <i class="fas fa-sign-out-alt me-2"></i>Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <div class="container">
+            <!-- User Profile Section -->
+            <div class="user-profile">
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h3 th:if="${#authentication != null}" th:text="${#authentication.name}">User Name</h3>
+                    <h3 th:unless="${#authentication != null}">Guest User</h3>
+                    <p class="text-muted">Member since 2024</p>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card mb-3">
+                            <div class="card-body text-center">
+                                <h5>Total Analyses</h5>
+                                <h2>0</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card mb-3">
+                            <div class="card-body text-center">
+                                <h5>Healthy Plants</h5>
+                                <h2>0</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card mb-3">
+                            <div class="card-body text-center">
+                                <h5>Diseased Plants</h5>
+                                <h2>0</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upload Section -->
+            <div class="upload-container">
+                <div class="upload-header">
+                    <h1>Plant Disease Detection</h1>
+                    <p>Upload an image of your plant to detect diseases</p>
+                </div>
+                
+                <form id="uploadForm" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="plantType" class="form-label">Select Plant Type</label>
+                                <select class="form-control" id="plantType" name="plantType" required>
+                                    <option value="">Choose a plant type...</option>
+                                    <option value="apple">Apple</option>
+                                    <option value="corn">Corn</option>
+                                    <option value="grape">Grape</option>
+                                    <option value="peach">Peach</option>
+                                    <option value="tomato">Tomato</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="image" class="form-label">Upload Image</label>
+                                <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-analyze">
+                            <i class="fas fa-search me-2"></i>Analyze Plant Disease
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="loading">
+                <div class="loading-spinner"></div>
+                <p class="mt-3">Analyzing image...</p>
+            </div>
+
+            <div class="error-message" id="errorMessage"></div>
+
+            <div class="result-container" id="resultContainer">
+                <div class="result-header">
+                    <h2>Analysis Results</h2>
+                </div>
+                <div class="result-content">
+                    <img id="resultImage" class="result-image" src="" alt="Analyzed Plant">
+                    <h3 id="predictionResult" class="mb-4"></h3>
+                    <div id="confidenceScores"></div>
+                </div>
+            </div>
+
+            <!-- Features Section -->
+            <div class="features-section" id="features">
+                <div class="container">
+                    <h2 class="text-center mb-5">Our Features</h2>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="feature-card">
+                                <i class="fas fa-microscope feature-icon"></i>
+                                <h4>Advanced Detection</h4>
+                                <p>Using state-of-the-art AI models to detect plant diseases with high accuracy</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="feature-card">
+                                <i class="fas fa-leaf feature-icon"></i>
+                                <h4>Multiple Plants</h4>
+                                <p>Support for various plant types including apple, corn, grape, peach, and tomato</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="feature-card">
+                                <i class="fas fa-chart-line feature-icon"></i>
+                                <h4>Detailed Analysis</h4>
+                                <p>Get confidence scores and detailed information about detected diseases</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- About Section -->
+            <div class="about-section" id="about">
+                <div class="container">
+                    <h2 class="text-center mb-5">About Plant Disease Detection</h2>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4>Our Mission</h4>
+                            <p>We aim to help farmers and gardeners detect plant diseases early, preventing crop loss and promoting sustainable agriculture.</p>
+                            <h4 class="mt-4">How It Works</h4>
+                            <p>Our system uses advanced machine learning models trained on thousands of plant images to accurately identify diseases and provide detailed analysis.</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h4>Supported Plants</h4>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check text-success me-2"></i>Apple Trees</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Corn Plants</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Grape Vines</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Peach Trees</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Tomato Plants</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- History Section -->
+            <div class="history-section" id="history">
+                <h3 class="mb-4">Analysis History</h3>
+                <div class="history-item">
+                    <p class="text-muted">No analysis history yet</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Plant Disease Detection</h5>
+                    <p class="text-muted">Helping farmers and gardeners protect their plants</p>
+                </div>
+                <div class="col-md-6 text-end">
+                    <a href="#" class="footer-link">Terms & Conditions</a>
+                    <a href="#" class="footer-link">Privacy Policy</a>
+                    <a href="#" class="footer-link">Contact Us</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const loading = document.querySelector('.loading');
+            const errorMessage = document.getElementById('errorMessage');
+            const resultContainer = document.getElementById('resultContainer');
+            
+            // Reset UI
+            loading.style.display = 'block';
+            errorMessage.style.display = 'none';
+            resultContainer.style.display = 'none';
+            
+            try {
+                const response = await fetch('/api/analyze', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === 'error') {
+                    throw new Error(result.message);
+                }
+                
+                // Display results
+                document.getElementById('resultImage').src = URL.createObjectURL(formData.get('image'));
+                document.getElementById('predictionResult').textContent = result.prediction;
+                
+                const confidenceScores = document.getElementById('confidenceScores');
+                confidenceScores.innerHTML = '';
+                
+                result.confidence_scores[0].forEach((score, index) => {
+                    const confidenceBar = document.createElement('div');
+                    confidenceBar.className = 'mb-3';
+                    
+                    const label = document.createElement('div');
+                    label.className = 'confidence-label';
+                    label.innerHTML = `
+                        <span>${result.plant_type.charAt(0).toUpperCase() + result.plant_type.slice(1)} - ${index + 1}</span>
+                        <span>${(score * 100).toFixed(2)}%</span>
+                    `;
+                    
+                    const bar = document.createElement('div');
+                    bar.className = 'confidence-bar';
+                    
+                    const fill = document.createElement('div');
+                    fill.className = 'confidence-fill';
+                    fill.style.width = `${score * 100}%`;
+                    
+                    bar.appendChild(fill);
+                    confidenceBar.appendChild(label);
+                    confidenceBar.appendChild(bar);
+                    confidenceScores.appendChild(confidenceBar);
+                });
+                
+                resultContainer.style.display = 'block';
+            } catch (error) {
+                errorMessage.textContent = error.message;
+                errorMessage.style.display = 'block';
+            } finally {
+                loading.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html> 
