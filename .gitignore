@@ -73,4 +73,9 @@ Thumbs.db
 
 # Project specific
 python_app/models/
+python_app/python_app/models/
+*.keras
+*.h5
+*.model
+*.weights
 *.log
