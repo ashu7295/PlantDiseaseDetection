@@ -34,7 +34,7 @@ pip install -r requirements.txt
 
 3. Download the model files:
    - Create a directory: `python_app/python_app/models/`
-   - Download the model files from [Google Drive](https://drive.google.com/drive/folders/1OzSlMS7ebYGaCsQ6cctGycl2YqNYJydW?usp=drive_link) and place them in the models directory:
+   - if you want the trained models contact me on this mail i will provide you the models "ashutoshrana972@gmail.com"
      - Trained_Model_Apple.keras
      - Trained_Model_Corn.keras
      - Trained_Model_Grapes.keras
