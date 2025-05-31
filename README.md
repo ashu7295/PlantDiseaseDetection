@@ -58,7 +58,7 @@ The application will be available at `http://localhost:8080`
 ## Configuration
 
 ### Database Setup
-1. Create a MySQL database named `plant_disease`
+1. Create a MySQL database named `plant_disease_db`
 2. Update the database credentials in `application.properties`
 
 ### Google OAuth Setup
@@ -106,5 +106,5 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Contact
 
-Your Name - your.email@example.com
+Your Name - ashutoshrana972@gmail.com
 Project Link: https://github.com/ashu7295/PlantDiseaseDetection 
