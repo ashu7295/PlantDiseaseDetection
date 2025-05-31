@@ -16,6 +16,7 @@ A web application that uses machine learning to detect diseases in plants. The a
 - Python 3.8 or higher
 - Maven
 - pip (Python package manager)
+- MySQL
 
 ## Installation
 
@@ -40,12 +41,33 @@ pip install -r requirements.txt
      - Trained_Model_Peach.keras
      - Trained_Model_Tomato.keras
 
-4. Build and run the Spring Boot application:
+4. Configure the application:
+   - Copy `src/main/resources/application.properties.template` to `src/main/resources/application.properties`
+   - Update the following properties in `application.properties`:
+     - Database credentials
+     - Google OAuth credentials (if using Google login)
+     - Python app path
+
+5. Build and run the Spring Boot application:
 ```bash
 ./mvnw spring-boot:run
 ```
 
 The application will be available at `http://localhost:8080`
+
+## Configuration
+
+### Database Setup
+1. Create a MySQL database named `plant_disease`
+2. Update the database credentials in `application.properties`
+
+### Google OAuth Setup
+1. Go to the [Google Cloud Console](https://console.cloud.google.com)
+2. Create a new project or select an existing one
+3. Enable the Google+ API
+4. Go to Credentials and create OAuth 2.0 Client ID
+5. Add authorized redirect URI: `http://localhost:8080/login/oauth2/code/google`
+6. Copy the client ID and client secret to `application.properties`
 
 ## Usage
 
