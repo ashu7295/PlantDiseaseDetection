@@ -79,3 +79,4 @@ python_app/python_app/models/
 *.model
 *.weights
 *.log
+src/main/resources/application.properties
