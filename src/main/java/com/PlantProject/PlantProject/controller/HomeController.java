@@ -65,4 +65,9 @@ public class HomeController {
     public String dashboard() {
         return "index";
     }
+
+    @GetMapping("/subscription")
+    public String subscription() {
+        return "subscription";
+    }
 } 

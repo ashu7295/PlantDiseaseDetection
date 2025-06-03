@@ -28,7 +28,7 @@ public class AnalysisService {
     }
     
     public List<Analysis> getUserAnalysisHistory(User user) {
-        return analysisRepository.findByUserOrderByAnalysisDateDesc(user);
+        return analysisRepository.findTop6ByUserOrderByAnalysisDateDesc(user);
     }
     
     public Map<String, Long> getUserAnalysisStats(User user) {

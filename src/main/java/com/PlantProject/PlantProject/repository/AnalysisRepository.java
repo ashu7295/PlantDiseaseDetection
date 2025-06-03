@@ -11,6 +11,8 @@ import java.util.List;
 public interface AnalysisRepository extends JpaRepository<Analysis, Long> {
     List<Analysis> findByUserOrderByAnalysisDateDesc(User user);
     
+    List<Analysis> findTop6ByUserOrderByAnalysisDateDesc(User user);
+    
     @Query("SELECT COUNT(a) FROM Analysis a WHERE a.user = ?1 AND a.prediction LIKE '%healthy%'")
     Long countHealthyPlants(User user);
     

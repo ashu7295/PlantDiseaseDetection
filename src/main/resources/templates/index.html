@@ -14,6 +14,7 @@
         .navbar {
             background: white;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 1rem 0;
         }
         .navbar-brand {
             color: #4CAF50 !important;
@@ -304,197 +305,284 @@
             color: #6c757d;
             font-size: 0.9rem;
         }
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: 60px;
+            background: linear-gradient(180deg, #4CAF50 0%, #45a049 100%);
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            transition: width 0.3s ease;
+            z-index: 1000;
+            padding-top: 70px;
+        }
+        .sidebar.expanded {
+            width: 250px;
+        }
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            overflow: hidden;
+            border-left: 3px solid transparent;
+        }
+        .sidebar-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-left: 3px solid white;
+        }
+        .sidebar-item.active {
+            background: rgba(255, 255, 255, 0.2);
+            border-left: 3px solid white;
+        }
+        .sidebar-item i {
+            min-width: 30px;
+            font-size: 1.2rem;
+        }
+        .sidebar-item span {
+            margin-left: 15px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            font-weight: 500;
+        }
+        .sidebar.expanded .sidebar-item span {
+            opacity: 1;
+        }
+        .main-content {
+            margin-left: 60px;
+            transition: margin-left 0.3s ease;
+        }
+        .main-content.expanded {
+            margin-left: 250px;
+        }
+        .hamburger {
+            position: fixed;
+            left: 15px;
+            top: 15px;
+            z-index: 1001;
+            background: #4CAF50;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .hamburger:hover {
+            background: #45a049;
+        }
+        .hamburger i {
+            font-size: 1.5rem;
+            color: white;
+        }
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light">
-        <div class="container">
-            <a class="navbar-brand" href="#">
-                <i class="fas fa-leaf me-2"></i>Plant Disease Detection
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#about">About</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#features">Features</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#history">History</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/logout">
-                            <i class="fas fa-sign-out-alt me-2"></i>Logout
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <button class="hamburger" id="sidebarToggle">
+        <i class="fas fa-bars"></i>
+    </button>
 
-    <div class="main-container">
-        <div class="container">
-            <!-- User Profile Section -->
-            <div class="user-profile">
-                <div class="profile-header">
-                    <div class="profile-avatar">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <h3 id="userName">Loading...</h3>
-                    <p class="text-muted" id="userJoinDate">Loading...</p>
-                </div>
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="card mb-3">
-                            <div class="card-body text-center">
-                                <h5>Total Analyses</h5>
-                                <h2 id="totalAnalyses">0</h2>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card mb-3">
-                            <div class="card-body text-center">
-                                <h5>Healthy Plants</h5>
-                                <h2 id="healthyPlants">0</h2>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card mb-3">
-                            <div class="card-body text-center">
-                                <h5>Diseased Plants</h5>
-                                <h2 id="diseasedPlants">0</h2>
-                            </div>
-                        </div>
-                    </div>
+    <div class="sidebar" id="sidebar">
+        <a href="#about" class="sidebar-item">
+            <i class="fas fa-info-circle"></i>
+            <span>About</span>
+        </a>
+        <a href="#features" class="sidebar-item">
+            <i class="fas fa-star"></i>
+            <span>Features</span>
+        </a>
+        <a href="#history" class="sidebar-item">
+            <i class="fas fa-history"></i>
+            <span>History</span>
+        </a>
+        <a href="/subscription" class="sidebar-item">
+            <i class="fas fa-crown"></i>
+            <span>Upgrade</span>
+        </a>
+    </div>
+
+    <div class="main-content" id="mainContent">
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <div class="container">
+                <a class="navbar-brand" href="#">
+                    <i class="fas fa-leaf me-2"></i>Plant Disease Detection
+                </a>
+                <div class="ms-auto">
+                    <a class="nav-link" href="/logout">
+                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                    </a>
                 </div>
             </div>
+        </nav>
 
-            <!-- Upload Section -->
-            <div class="upload-container">
-                <div class="upload-header">
-                    <h1>Plant Disease Detection</h1>
-                    <p>Upload an image of your plant to detect diseases</p>
-                </div>
-                
-                <form id="uploadForm" enctype="multipart/form-data">
-                    <div class="upload-area" id="uploadArea">
-                        <i class="fas fa-cloud-upload-alt fa-3x mb-3"></i>
-                        <p>Drag and drop an image here or click to select</p>
-                    </div>
-                    <img id="preview" class="preview-image" style="display:none;">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="plantType" class="form-label">Select Plant Type</label>
-                                <select class="form-control" id="plantType" name="plantType" required>
-                                    <option value="">Choose a plant type...</option>
-                                    <option value="apple">Apple</option>
-                                    <option value="corn">Corn</option>
-                                    <option value="grape">Grape</option>
-                                    <option value="peach">Peach</option>
-                                    <option value="tomato">Tomato</option>
-                                </select>
-                            </div>
+        <div class="main-container">
+            <div class="container">
+                <!-- User Profile Section -->
+                <div class="user-profile">
+                    <div class="profile-header">
+                        <div class="profile-avatar">
+                            <i class="fas fa-user"></i>
                         </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="image" class="form-label">Upload Image</label>
-                                <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
-                            </div>
-                        </div>
+                        <h3 id="userName">Loading...</h3>
+                        <p class="text-muted" id="userJoinDate">Loading...</p>
                     </div>
-                    <div class="text-center">
-                        <button type="submit" class="btn btn-analyze">
-                            <i class="fas fa-search me-2"></i>Analyze Plant Disease
-                        </button>
-                    </div>
-                </form>
-            </div>
-
-            <div class="loading">
-                <div class="loading-spinner"></div>
-                <p class="mt-3">Analyzing image...</p>
-            </div>
-
-            <div class="error-message" id="errorMessage"></div>
-
-            <div class="result-container" id="resultContainer">
-                <div class="result-header">
-                    <h2>Analysis Results</h2>
-                </div>
-                <div class="result-content">
-                    <img id="resultImage" class="result-image mb-3 mx-auto d-block" src="" alt="Analyzed Plant">
-                    <h3 id="predictionResult" class="mb-4"></h3>
-                    <div id="confidenceScores"></div>
-                </div>
-            </div>
-
-            <!-- Features Section -->
-            <div class="features-section" id="features">
-                <div class="container">
-                    <h2 class="text-center mb-5">Our Features</h2>
                     <div class="row">
                         <div class="col-md-4">
-                            <div class="feature-card">
-                                <i class="fas fa-microscope feature-icon"></i>
-                                <h4>Advanced Detection</h4>
-                                <p>Using state-of-the-art AI models to detect plant diseases with high accuracy</p>
+                            <div class="card mb-3">
+                                <div class="card-body text-center">
+                                    <h5>Total Analyses</h5>
+                                    <h2 id="totalAnalyses">0</h2>
+                                </div>
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="feature-card">
-                                <i class="fas fa-leaf feature-icon"></i>
-                                <h4>Multiple Plants</h4>
-                                <p>Support for various plant types including apple, corn, grape, peach, and tomato</p>
+                            <div class="card mb-3">
+                                <div class="card-body text-center">
+                                    <h5>Healthy Plants</h5>
+                                    <h2 id="healthyPlants">0</h2>
+                                </div>
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="feature-card">
-                                <i class="fas fa-chart-line feature-icon"></i>
-                                <h4>Detailed Analysis</h4>
-                                <p>Get confidence scores and detailed information about detected diseases</p>
+                            <div class="card mb-3">
+                                <div class="card-body text-center">
+                                    <h5>Diseased Plants</h5>
+                                    <h2 id="diseasedPlants">0</h2>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- About Section -->
-            <div class="about-section" id="about">
-                <div class="container">
-                    <h2 class="text-center mb-5">About Plant Disease Detection</h2>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h4>Our Mission</h4>
-                            <p>We aim to help farmers and gardeners detect plant diseases early, preventing crop loss and promoting sustainable agriculture.</p>
-                            <h4 class="mt-4">How It Works</h4>
-                            <p>Our system uses advanced machine learning models trained on thousands of plant images to accurately identify diseases and provide detailed analysis.</p>
+                <!-- Upload Section -->
+                <div class="upload-container">
+                    <div class="upload-header">
+                        <h1>Plant Disease Detection</h1>
+                        <p>Upload an image of your plant to detect diseases</p>
+                    </div>
+                    
+                    <form id="uploadForm" enctype="multipart/form-data">
+                        <div class="upload-area" id="uploadArea">
+                            <i class="fas fa-cloud-upload-alt fa-3x mb-3"></i>
+                            <p>Drag and drop an image here or click to select</p>
                         </div>
-                        <div class="col-md-6">
-                            <h4>Supported Plants</h4>
-                            <ul class="list-unstyled">
-                                <li><i class="fas fa-check text-success me-2"></i>Apple Trees</li>
-                                <li><i class="fas fa-check text-success me-2"></i>Corn Plants</li>
-                                <li><i class="fas fa-check text-success me-2"></i>Grape Vines</li>
-                                <li><i class="fas fa-check text-success me-2"></i>Peach Trees</li>
-                                <li><i class="fas fa-check text-success me-2"></i>Tomato Plants</li>
-                            </ul>
+                        <img id="preview" class="preview-image" style="display:none;">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="plantType" class="form-label">Select Plant Type</label>
+                                    <select class="form-control" id="plantType" name="plantType" required>
+                                        <option value="">Choose a plant type...</option>
+                                        <option value="apple">Apple</option>
+                                        <option value="corn">Corn</option>
+                                        <option value="grape">Grape</option>
+                                        <option value="peach">Peach</option>
+                                        <option value="tomato">Tomato</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="image" class="form-label">Upload Image</label>
+                                    <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-analyze">
+                                <i class="fas fa-search me-2"></i>Analyze Plant Disease
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <p class="mt-3">Analyzing image...</p>
+                </div>
+
+                <div class="error-message" id="errorMessage"></div>
+
+                <div class="result-container" id="resultContainer">
+                    <div class="result-header">
+                        <h2>Analysis Results</h2>
+                    </div>
+                    <div class="result-content">
+                        <img id="resultImage" class="result-image mb-3 mx-auto d-block" src="" alt="Analyzed Plant">
+                        <h3 id="predictionResult" class="mb-4"></h3>
+                        <div id="confidenceScores"></div>
+                    </div>
+                </div>
+
+                <!-- Features Section -->
+                <div class="features-section" id="features">
+                    <div class="container">
+                        <h2 class="text-center mb-5">Our Features</h2>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="feature-card">
+                                    <i class="fas fa-microscope feature-icon"></i>
+                                    <h4>Advanced Detection</h4>
+                                    <p>Using state-of-the-art AI models to detect plant diseases with high accuracy</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="feature-card">
+                                    <i class="fas fa-leaf feature-icon"></i>
+                                    <h4>Multiple Plants</h4>
+                                    <p>Support for various plant types including apple, corn, grape, peach, and tomato</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="feature-card">
+                                    <i class="fas fa-chart-line feature-icon"></i>
+                                    <h4>Detailed Analysis</h4>
+                                    <p>Get confidence scores and detailed information about detected diseases</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- History Section -->
-            <div class="history-section" id="history">
-                <h3 class="mb-4">Analysis History</h3>
-                <div id="analysisHistory" class="row">
-                    <!-- Analysis history items will be dynamically added here -->
+                <!-- About Section -->
+                <div class="about-section" id="about">
+                    <div class="container">
+                        <h2 class="text-center mb-5">About Plant Disease Detection</h2>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h4>Our Mission</h4>
+                                <p>We aim to help farmers and gardeners detect plant diseases early, preventing crop loss and promoting sustainable agriculture.</p>
+                                <h4 class="mt-4">How It Works</h4>
+                                <p>Our system uses advanced machine learning models trained on thousands of plant images to accurately identify diseases and provide detailed analysis.</p>
+                            </div>
+                            <div class="col-md-6">
+                                <h4>Supported Plants</h4>
+                                <ul class="list-unstyled">
+                                    <li><i class="fas fa-check text-success me-2"></i>Apple Trees</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Corn Plants</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Grape Vines</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Peach Trees</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Tomato Plants</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- History Section -->
+                <div class="history-section" id="history">
+                    <h3 class="mb-4">Recent Analysis History</h3>
+                    <div id="analysisHistory" class="row">
+                        <!-- Analysis history items will be dynamically added here -->
+                    </div>
+                    <div id="moreHistoryMessage" class="text-center mt-3" style="display: none;">
+                        <p class="text-muted">Showing your 6 most recent analyses. <a href="#" class="text-primary">View full history</a></p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -531,6 +619,9 @@
             const loading = document.querySelector('.loading');
             const historyList = document.getElementById('historyList');
             const errorMessage = document.getElementById('errorMessage');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            const sidebarToggle = document.getElementById('sidebarToggle');
 
             // Load user profile
             loadUserProfile();
@@ -660,10 +751,14 @@
                     const response = await fetch('/api/analysis/history');
                     const history = await response.json();
                     const historyList = document.getElementById('analysisHistory');
+                    const moreHistoryMessage = document.getElementById('moreHistoryMessage');
+                    
                     if (!Array.isArray(history) || history.length === 0) {
                         historyList.innerHTML = '<div class="text-center text-muted">No analysis history found.</div>';
+                        moreHistoryMessage.style.display = 'none';
                         return;
                     }
+                    
                     historyList.innerHTML = history.map(item => `
                         <div class="col-md-6 col-lg-4 mb-3">
                             <div class="card h-100 shadow-sm border-0">
@@ -682,6 +777,9 @@
                             </div>
                         </div>
                     `).join('');
+                    
+                    // Show the "more history" message if we have exactly 6 items
+                    moreHistoryMessage.style.display = history.length === 6 ? 'block' : 'none';
                 } catch (error) {
                     const historyList = document.getElementById('analysisHistory');
                     historyList.innerHTML = '<div class="text-danger">Error loading history.</div>';
@@ -717,6 +815,57 @@
                     document.getElementById('userJoinDate').textContent = 'Not logged in';
                 }
             }
+
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('expanded');
+                mainContent.classList.toggle('expanded');
+            });
+
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', function(event) {
+                if (window.innerWidth <= 768) {
+                    if (!sidebar.contains(event.target) && !sidebarToggle.contains(event.target)) {
+                        sidebar.classList.remove('expanded');
+                        mainContent.classList.remove('expanded');
+                    }
+                }
+            });
+
+            // Handle sidebar item clicks
+            document.querySelectorAll('.sidebar-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    if (window.innerWidth <= 768) {
+                        sidebar.classList.remove('expanded');
+                        mainContent.classList.remove('expanded');
+                    }
+                });
+            });
+
+            // Add active class to current section
+            const sections = document.querySelectorAll('section[id]');
+            const sidebarItems = document.querySelectorAll('.sidebar-item');
+
+            function setActiveSection() {
+                const scrollPosition = window.scrollY;
+
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop - 100;
+                    const sectionHeight = section.offsetHeight;
+                    const sectionId = section.getAttribute('id');
+
+                    if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+                        sidebarItems.forEach(item => {
+                            item.classList.remove('active');
+                            if (item.getAttribute('href') === `#${sectionId}`) {
+                                item.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }
+
+            window.addEventListener('scroll', setActiveSection);
+            setActiveSection(); // Set initial active section
         });
     </script>
 </body>

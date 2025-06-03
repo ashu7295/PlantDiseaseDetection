@@ -13,6 +13,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            margin: 0;
+            padding: 20px;
         }
         .signup-container {
             background: white;
@@ -22,6 +24,7 @@
             width: 100%;
             max-width: 900px;
             min-height: 600px;
+            margin: auto;
         }
         .signup-row {
             min-height: 600px;
@@ -86,10 +89,27 @@
             width: 100%;
             margin-bottom: 20px;
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #757575;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
         }
         .btn-google:hover {
-            background: #f5f5f5;
+            background: #f8f9fa;
             transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-color: #dadce0;
+        }
+        .btn-google:active {
+            transform: translateY(0);
+        }
+        .btn-google i {
+            font-size: 1.2rem;
+            margin-right: 10px;
+            color: #4285F4;
         }
         .login-link {
             text-align: center;
@@ -118,7 +138,7 @@
         <div class="signup-container">
             <div class="row signup-row">
                 <div class="col-md-6 signup-image">
-                    <img src="/images/plant-disease-detection.svg" alt="Plant Disease Detection" class="img-fluid">
+                    <img src="/images/img.png" alt="Plant Disease Detection" class="img-fluid">
                 </div>
                 <div class="col-md-6 signup-form">
                     <div class="signup-header">
@@ -144,7 +164,8 @@
                     </form>
                     
                     <a th:href="@{/oauth2/authorization/google}" class="btn btn-google">
-                        <i class="fab fa-google me-2"></i>Continue with Google
+                        <i class="fab fa-google"></i>
+                        <span>Continue with Google</span>
                     </a>
                     
                     <div class="login-link">
