@@ -48,24 +48,79 @@ public class UserService {
     public User getCurrentUser() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         logger.info("Getting current user for email: {}", email);
+        if ("anonymousUser".equals(email)) {
+            logger.warn("Attempted to get current user for anonymous user");
+            return null;
+        }
         return findByEmail(email);
     }
 
     public User findByEmail(String email) {
-        return userRepository.findByEmail(email).orElse(null);
+        logger.info("Finding user by email: {}", email);
+        if (email == null || "anonymousUser".equals(email)) {
+            logger.warn("Attempted to find user with null/anonymous email");
+            return null;
+        }
+        User user = userRepository.findByEmail(email).orElse(null);
+        if (user == null) {
+            logger.warn("No user found for email: {}", email);
+        } else {
+            logger.info("Found user: {} (id: {})", user.getEmail(), user.getId());
+        }
+        return user;
     }
 
     public User findById(Long id) {
-        return userRepository.findById(id).orElse(null);
+        logger.info("Finding user by id: {}", id);
+        if (id == null) {
+            logger.warn("Attempted to find user with null id");
+            return null;
+        }
+        User user = userRepository.findById(id).orElse(null);
+        if (user == null) {
+            logger.warn("No user found for id: {}", id);
+        } else {
+            logger.info("Found user: {} (id: {})", user.getEmail(), user.getId());
+        }
+        return user;
     }
 
+    @Transactional
     public User saveUser(User user) {
-        logger.info("Saving user: {}", user.getEmail());
-        // Only encode password if it's a new one (not already encoded)
-        if (user.getPassword() != null && !user.getPassword().isEmpty() && !user.getPassword().startsWith("$2a$")) {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        try {
+            logger.info("Starting saveUser operation for user: id={}, email={}", user.getId(), user.getEmail());
+            
+            // Validate user object
+            if (user.getEmail() == null || user.getEmail().trim().isEmpty()) {
+                logger.error("Cannot save user: email is null or empty");
+                throw new IllegalArgumentException("Email cannot be null or empty");
+            }
+            
+            // Check if user exists (for new users)
+            if (user.getId() == null) {
+                logger.info("New user creation detected");
+                if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+                    logger.error("Cannot create new user: email already exists: {}", user.getEmail());
+                    throw new IllegalArgumentException("User already exists with this email");
+                }
+            }
+            
+            // Only encode password if it's a new one (not already encoded)
+            if (user.getPassword() != null && !user.getPassword().isEmpty() && !user.getPassword().startsWith("$2a$")) {
+                logger.info("Encoding new password for user: {}", user.getEmail());
+                user.setPassword(passwordEncoder.encode(user.getPassword()));
+            }
+            
+            // Save user
+            logger.info("Attempting to save user to database: {}", user.getEmail());
+            User savedUser = userRepository.save(user);
+            logger.info("Successfully saved user: id={}, email={}", savedUser.getId(), savedUser.getEmail());
+            
+            return savedUser;
+        } catch (Exception e) {
+            logger.error("Error saving user: {}", user.getEmail(), e);
+            throw e;
         }
-        return userRepository.save(user);
     }
 
     @Transactional

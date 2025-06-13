@@ -441,7 +441,13 @@
         });
 
         function loadAnalysisHistory() {
-            fetch('/analysis/api/history')
+            fetch('/analysis/api/history', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json'
+                },
+                credentials: 'include'
+            })
                 .then(response => response.json())
                 .then(data => {
                     updateStatistics(data);

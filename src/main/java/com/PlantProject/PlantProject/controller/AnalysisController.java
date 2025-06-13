@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.http.MediaType;
 
 import java.util.List;
 import java.util.Map;
@@ -163,7 +164,7 @@ public class AnalysisController {
         return "analysis-history";
     }
 
-    @GetMapping("/api/history")
+    @GetMapping(value = "/api/history", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<?> getAnalysisHistory() {
         try {
@@ -171,18 +172,23 @@ public class AnalysisController {
             String email = auth.getName();
             User user = userService.findByEmail(email);
             if (user == null) {
-                return ResponseEntity.badRequest().body(Map.of("error", "User not found"));
+                return ResponseEntity.badRequest()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(Map.of("error", "User not found"));
             }
             List<AnalysisResult> recentAnalyses = analysisService.getRecentAnalyses(user);
-            return ResponseEntity.ok(recentAnalyses);
+            return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(recentAnalyses);
         } catch (Exception e) {
             logger.error("Error fetching analysis history", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Error fetching analysis history: " + e.getMessage()));
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(Map.of("error", "Error fetching analysis history: " + e.getMessage()));
         }
     }
 
-    @GetMapping("/api/stats")
+    @GetMapping(value = "/api/stats", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<?> getAnalysisStats() {
         try {
@@ -190,14 +196,19 @@ public class AnalysisController {
             String email = auth.getName();
             User user = userService.findByEmail(email);
             if (user == null) {
-                return ResponseEntity.badRequest().body(Map.of("error", "User not found"));
+                return ResponseEntity.badRequest()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(Map.of("error", "User not found"));
             }
             Map<String, Object> stats = analysisService.getUserAnalysisStats(user);
-            return ResponseEntity.ok(stats);
+            return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(stats);
         } catch (Exception e) {
             logger.error("Error fetching analysis stats", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Error fetching analysis stats: " + e.getMessage()));
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(Map.of("error", "Error fetching analysis stats: " + e.getMessage()));
         }
     }
 

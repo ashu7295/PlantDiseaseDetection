@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div th:fragment="dashboard-content">
+        <!-- Enhanced Stats Cards -->
+        <div class="stats-container animate-fadein" style="animation-delay: 0.6s;">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="stat-card">
+                        <div class="stat-icon total">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <div class="stat-value" id="totalAnalyses">0</div>
+                        <div class="stat-label">Total Analyses</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-card">
+                        <div class="stat-icon healthy">
+                            <i class="fas fa-leaf"></i>
+                        </div>
+                        <div class="stat-value" id="healthyPlants">0</div>
+                        <div class="stat-label">Healthy Plants</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-card">
+                        <div class="stat-icon diseased">
+                            <i class="fas fa-bug"></i>
+                        </div>
+                        <div class="stat-value" id="diseasedPlants">0</div>
+                        <div class="stat-label">Diseased Plants</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enhanced Quick Actions -->
+        <div class="quick-actions animate-fadein" style="animation-delay: 0.8s;">
+            <h2 class="section-title">Quick Actions</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="action-card">
+                        <div class="action-icon">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                        <h3 class="action-title">Analyze Plant</h3>
+                        <p class="action-description">Upload a photo of your plant to get instant AI-powered disease detection and analysis.</p>
+                        <a href="/analysis/page" class="action-btn">Start Analysis</a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="action-card">
+                        <div class="action-icon">
+                            <i class="fas fa-history"></i>
+                        </div>
+                        <h3 class="action-title">View History</h3>
+                        <p class="action-description">Review your previous plant analyses and track the health of your plants over time.</p>
+                        <a href="/api/analysis/page/history" class="action-btn">View History</a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="action-card">
+                        <div class="action-icon">
+                            <i class="fas fa-crown"></i>
+                        </div>
+                        <h3 class="action-title">Upgrade Plan</h3>
+                        <p class="action-description">Unlock premium features including unlimited analyses and advanced reporting.</p>
+                        <a href="/subscription" class="action-btn">Upgrade Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enhanced Recent Activity -->
+        <div class="recent-activity animate-fadein" style="animation-delay: 1s;" id="recentActivity">
+            <h2 class="section-title">Recent Activity</h2>
+            <div id="analysisHistory">
+                <div class="text-center text-muted py-4">
+                    <i class="fas fa-leaf fa-3x mb-3 opacity-50"></i>
+                    <p>No recent activity found. Start by analyzing your first plant!</p>
+                    <a href="/analysis/page" class="action-btn">Analyze Now</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enhanced Features Section -->
+        <div class="features-section animate-fadein" style="animation-delay: 1.2s;" id="features">
+            <h2 class="section-title text-center">Why Choose Our Platform?</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h3 class="feature-title">AI-Powered Detection</h3>
+                        <p class="feature-description">Advanced machine learning models trained on thousands of plant images for accurate disease identification.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-seedling"></i>
+                        </div>
+                        <h3 class="feature-title">Multiple Plant Types</h3>
+                        <p class="feature-description">Support for various crops including tomatoes, apples, corn, grapes, and peaches with expanding database.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3 class="feature-title">Detailed Analytics</h3>
+                        <p class="feature-description">Get comprehensive analysis reports with confidence scores and actionable recommendations.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enhanced About Section -->
+        <div class="features-section animate-fadein" style="animation-delay: 1.4s;" id="about">
+            <h2 class="section-title text-center">About Plant Disease Detection</h2>
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h4 class="mb-3">Our Mission</h4>
+                    <p class="mb-4">We're dedicated to helping farmers and gardeners detect plant diseases early, preventing crop loss and promoting sustainable agriculture through cutting-edge AI technology.</p>
+                    
+                    <h4 class="mb-3">How It Works</h4>
+                    <p>Our system uses state-of-the-art deep learning models trained on extensive datasets of plant images to provide accurate disease detection and analysis.</p>
+                </div>
+                <div class="col-md-6">
+                    <h4 class="mb-3">Supported Plants</h4>
+                    <div class="row">
+                        <div class="col-6">
+                            <ul class="list-unstyled">
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Apple Trees</li>
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Corn Plants</li>
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Grape Vines</li>
+                            </ul>
+                        </div>
+                        <div class="col-6">
+                            <ul class="list-unstyled">
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Peach Trees</li>
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Tomato Plants</li>
+                                <li class="mb-2"><i class="fas fa-plus text-muted me-2"></i>More Coming</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

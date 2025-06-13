@@ -72,7 +72,7 @@
                             </div>
                             <div class="d-none d-md-block text-start">
                                 <div class="fw-semibold" style="font-size: 0.9rem; line-height: 1.2;" id="userNameDisplay">Guest</div>
-                                <div class="text-muted" style="font-size: 0.75rem; line-height: 1.2;" id="userRoleDisplay">Loading...</div>
+                                <div class="text-muted" style="font-size: 0.75rem; line-height: 1.2;" id="userRoleDisplay">Free Member</div>
                             </div>
                             <i class="fas fa-chevron-down ms-2" style="font-size: 0.7rem; color: #6c757d;"></i>
                         </button>
@@ -90,7 +90,7 @@
                                         <div class="d-flex align-items-center mt-1">
                                             <span class="badge bg-success-subtle text-success" style="font-size: 0.7rem; padding: 2px 8px;" id="userStatusBadge">
                                                 <i class="fas fa-circle" style="font-size: 0.5rem; margin-right: 4px;"></i>
-                                                <span id="userStatusText">Loading...</span>
+                                                <span id="userStatusText">Free Member</span>
                                             </span>
                                         </div>
                                     </div>
@@ -291,16 +291,17 @@
                     }
                     
                     if (profileResponse.ok) {
-                        const profile = await profileResponse.json();
-                        console.log('Profile data received:', profile);
+                        const response = await profileResponse.json();
+                        console.log('Profile data received:', response);
                         
-                        if (profile.status !== 'error') {
-                            updateUserDisplay(profile);
+                        if (response && response.status === 'success' && response.user && response.user.name) {
+                            console.log('Updating display with user data:', response.user);
+                            updateUserDisplay(response.user);
                         } else {
-                            console.error('Profile API error:', profile.message);
+                            console.error('Invalid profile data received:', response);
                             // Set default values for guest user
                             updateUserDisplay({
-                                name: 'Guest User',
+                                name: 'Guest',
                                 email: 'Not logged in',
                                 hasActiveSubscription: false
                             });
@@ -308,7 +309,7 @@
                     } else {
                         console.error('Profile API failed with status:', profileResponse.status);
                         updateUserDisplay({
-                            name: 'Guest User',
+                            name: 'Guest',
                             email: 'Not logged in',
                             hasActiveSubscription: false
                         });
@@ -382,7 +383,7 @@
                     console.error('Error loading user data:', error);
                     // Set default values for guest user
                     updateUserDisplay({
-                        name: 'Guest User',
+                        name: 'Guest',
                         email: 'Not logged in',
                         hasActiveSubscription: false
                     });
@@ -397,11 +398,14 @@
             }
 
             function updateUserDisplay(profile) {
-                const name = profile.name || 'Guest User';
+                console.log('updateUserDisplay called with profile:', profile);
+                
+                const name = profile.name || 'Guest';
                 const email = profile.email || 'Not logged in';
-                const initials = name.substring(0, 1).toUpperCase();
+                const initials = (name || 'G').substring(0, 1).toUpperCase();
+                const hasSubscription = profile.hasActiveSubscription || false;
 
-                console.log('Updating user display with:', { name, email, initials });
+                console.log('Processed user data:', { name, email, initials, hasSubscription });
 
                 // Update all name displays
                 const userNameDisplay = document.getElementById('userNameDisplay');
@@ -409,52 +413,45 @@
                 const dropdownUserEmail = document.getElementById('dropdownUserEmail');
                 const userInitials = document.getElementById('userInitials');
                 const dropdownUserInitials = document.getElementById('dropdownUserInitials');
+                const userRoleDisplay = document.getElementById('userRoleDisplay');
+                const userStatusText = document.getElementById('userStatusText');
+
+                console.log('Found DOM elements:', {
+                    userNameDisplay: !!userNameDisplay,
+                    dropdownUserName: !!dropdownUserName,
+                    dropdownUserEmail: !!dropdownUserEmail,
+                    userInitials: !!userInitials,
+                    dropdownUserInitials: !!dropdownUserInitials,
+                    userRoleDisplay: !!userRoleDisplay,
+                    userStatusText: !!userStatusText
+                });
 
                 if (userNameDisplay) {
+                    console.log('Setting userNameDisplay to:', name);
                     userNameDisplay.textContent = name;
-                    console.log('Updated userNameDisplay to:', name);
                 }
-                if (dropdownUserName) {
-                    dropdownUserName.textContent = name;
-                    console.log('Updated dropdownUserName to:', name);
-                }
-                if (dropdownUserEmail) {
-                    dropdownUserEmail.textContent = email;
-                    console.log('Updated dropdownUserEmail to:', email);
-                }
-                if (userInitials) {
-                    userInitials.textContent = initials;
-                    console.log('Updated userInitials to:', initials);
-                }
-                if (dropdownUserInitials) {
-                    dropdownUserInitials.textContent = initials;
-                    console.log('Updated dropdownUserInitials to:', initials);
-                }
+                if (dropdownUserName) dropdownUserName.textContent = name;
+                if (dropdownUserEmail) dropdownUserEmail.textContent = email;
+                if (userInitials) userInitials.textContent = initials;
+                if (dropdownUserInitials) dropdownUserInitials.textContent = initials;
 
-                // Update role/status
-                const hasSubscription = profile.hasActiveSubscription || false;
-                const roleDisplay = document.getElementById('userRoleDisplay');
+                // Update role/status displays
+                const membershipStatus = hasSubscription ? 'Premium Member' : 'Free Member';
+                console.log('Setting membership status to:', membershipStatus);
+
+                if (userRoleDisplay) userRoleDisplay.textContent = membershipStatus;
+                if (userStatusText) userStatusText.textContent = membershipStatus;
+
+                // Update status badge color
                 const statusBadge = document.getElementById('userStatusBadge');
-                const statusText = document.getElementById('userStatusText');
-
-                if (roleDisplay) {
+                if (statusBadge) {
                     if (hasSubscription) {
-                        roleDisplay.textContent = 'Premium Member';
+                        statusBadge.classList.remove('bg-success-subtle', 'text-success');
+                        statusBadge.classList.add('bg-warning-subtle', 'text-warning');
                     } else {
-                        roleDisplay.textContent = 'Free Member';
+                        statusBadge.classList.remove('bg-warning-subtle', 'text-warning');
+                        statusBadge.classList.add('bg-success-subtle', 'text-success');
                     }
-                    console.log('Updated roleDisplay to:', roleDisplay.textContent);
-                }
-
-                if (statusBadge && statusText) {
-                    if (hasSubscription) {
-                        statusBadge.className = 'badge bg-warning-subtle text-warning';
-                        statusText.textContent = 'Premium';
-                    } else {
-                        statusBadge.className = 'badge bg-success-subtle text-success';
-                        statusText.textContent = 'Active';
-                    }
-                    console.log('Updated status to:', statusText.textContent);
                 }
             }
 

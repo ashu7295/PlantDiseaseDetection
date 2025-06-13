@@ -29,67 +29,45 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                       Authentication authentication) throws IOException, ServletException {
-        try {
-            OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
-            OAuth2User oauthUser = oauthToken.getPrincipal();
-            
-            // Log all attributes for debugging
-            logger.debug("OAuth2 user attributes: {}", oauthUser.getAttributes());
-            
-            String email = oauthUser.getAttribute("email");
-            String name = oauthUser.getAttribute("name");
-            String providerId = oauthUser.getAttribute("sub");
-
-            if (email == null) {
-                logger.error("Email not found in OAuth2 user attributes");
-                throw new RuntimeException("Email not found in OAuth2 user attributes");
-            }
-
-            logger.info("Processing OAuth2 login for user: {}", email);
-
-            // Check if user exists by email
-            User user = userRepository.findByEmail(email)
-                    .orElseGet(() -> {
-                        logger.info("Creating new user for email: {}", email);
-                        User newUser = new User();
-                        newUser.setEmail(email);
-                        newUser.setName(name);
-                        newUser.setAuthProvider(AuthProvider.GOOGLE);
-                        newUser.setProviderId(providerId);
-                        return newUser;
-                    });
-
-            // Update user info if needed
-            if (user.getAuthProvider() == AuthProvider.LOCAL) {
-                logger.info("Updating local user to Google authentication: {}", email);
-                user.setAuthProvider(AuthProvider.GOOGLE);
-                user.setProviderId(providerId);
-            }
-
-            // Update name if it has changed
-            if (name != null && !name.equals(user.getName())) {
-                logger.info("Updating user name for: {}", email);
-                user.setName(name);
-            }
-
-            // Save user
-            user = userRepository.save(user);
-            logger.info("Successfully saved user: {}", user.getEmail());
-
-            // Create a new authentication with the email as the principal
-            OAuth2AuthenticationToken newAuth = new OAuth2AuthenticationToken(
-                oauthUser,
-                oauthToken.getAuthorities(),
-                oauthToken.getAuthorizedClientRegistrationId()
-            );
-            SecurityContextHolder.getContext().setAuthentication(newAuth);
-
-            // Redirect to dashboard
-            setDefaultTargetUrl("/dashboard");
-            super.onAuthenticationSuccess(request, response, newAuth);
-        } catch (Exception e) {
-            logger.error("Error processing OAuth2 login", e);
-            throw e;
-        }
+        logger.info("OAuth2 login success for user: {}", authentication.getName());
+        
+        OAuth2User oauth2User = ((OAuth2AuthenticationToken) authentication).getPrincipal();
+        logger.info("OAuth2 user attributes: {}", oauth2User.getAttributes());
+        
+        String email = oauth2User.getAttribute("email");
+        String name = oauth2User.getAttribute("name");
+        
+        logger.info("Processing OAuth2 login for user - email: {}, name: {}", email, name);
+        
+        // Find or create user
+        User user = userRepository.findByEmail(email)
+            .orElseGet(() -> {
+                logger.info("Creating new user from OAuth2 login - email: {}", email);
+                User newUser = new User();
+                newUser.setEmail(email);
+                newUser.setName(name);
+                newUser.setAuthProvider(AuthProvider.GOOGLE);
+                newUser.setVerified(true);
+                return userRepository.save(newUser);
+            });
+        
+        logger.info("User found/created: {} (id: {})", user.getEmail(), user.getId());
+        
+        // Set session attributes
+        request.getSession().setAttribute("user", user.getEmail());
+        request.getSession().setAttribute("authenticated", true);
+        
+        // Update security context
+        Authentication newAuth = new OAuth2AuthenticationToken(
+            oauth2User,
+            oauth2User.getAuthorities(),
+            ((OAuth2AuthenticationToken) authentication).getAuthorizedClientRegistrationId()
+        );
+        SecurityContextHolder.getContext().setAuthentication(newAuth);
+        
+        logger.info("Updated security context with new authentication");
+        
+        // Redirect to dashboard
+        getRedirectStrategy().sendRedirect(request, response, "/dashboard");
     }
 } 

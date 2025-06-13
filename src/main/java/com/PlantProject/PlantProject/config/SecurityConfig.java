@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.config.http.SessionCreationPolicy;
 
 @Log4j2
 @Configuration
@@ -67,8 +68,10 @@ public class SecurityConfig {
                 .permitAll()
             )
             .sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 .maximumSessions(1)
                 .maxSessionsPreventsLogin(false)
+                .expiredUrl("/login?expired")
             );
         
         return http.build();

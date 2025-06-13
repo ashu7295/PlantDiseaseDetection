@@ -874,7 +874,10 @@
                     const response = await fetch('/api/analyze', {
                         method: 'POST',
                         body: formData,
-                        credentials: 'include'
+                        credentials: 'include',
+                        headers: {
+                            'Accept': 'application/json'
+                        }
                     });
 
                     console.log('Response received:', response.status, response.statusText);

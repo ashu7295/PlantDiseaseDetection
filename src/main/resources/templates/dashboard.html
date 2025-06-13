@@ -6,6 +6,7 @@
     <title>Dashboard - Plant Disease Detection</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/css/dashboard-styles.css" rel="stylesheet">
     <style>
         :root {
             --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -937,324 +938,198 @@
     <!-- Modals -->
     <div th:replace="~{dashboard-modals :: modals}"></div>
 
+    <!-- Profile Edit Modal -->
+    <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content" style="border: none; border-radius: 16px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);">
+                <div class="modal-header" style="background: linear-gradient(135deg, #198754 0%, #20c997 100%); color: white; border-radius: 16px 16px 0 0; border: none; padding: 24px 32px;">
+                    <div class="d-flex align-items-center">
+                        <div class="profile-icon-wrapper me-3" style="width: 48px; height: 48px; background: rgba(255,255,255,0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-user-edit" style="font-size: 1.5rem; color: white;"></i>
+                        </div>
+                        <div>
+                            <h5 class="modal-title mb-0" id="editProfileModalLabel" style="font-weight: 600; font-size: 1.25rem;">Edit Profile</h5>
+                            <small style="opacity: 0.9;">Update your personal information</small>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="padding: 32px;">
+                    <form id="profileEditForm" novalidate>
+                        <!-- Success Message -->
+                        <div id="profileSuccessMsg" class="alert alert-success d-none mb-4" role="alert" style="border-radius: 12px; border: none; background: #d1e7dd; color: #0a3622;">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-check-circle me-2" style="color: #198754;"></i>
+                                <span>Profile updated successfully!</span>
+                            </div>
+                        </div>
+
+                        <!-- Error Message -->
+                        <div id="profileErrorMsg" class="alert alert-danger d-none mb-4" role="alert" style="border-radius: 12px; border: none; background: #f8d7da; color: #721c24;">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-exclamation-circle me-2" style="color: #dc3545;"></i>
+                                <span id="profileErrorText">An error occurred while updating your profile.</span>
+                            </div>
+                        </div>
+
+                        <div class="row g-4">
+                            <!-- Personal Information Section -->
+                            <div class="col-12">
+                                <h6 class="section-title mb-3" style="color: #495057; font-weight: 600; font-size: 1rem; border-bottom: 2px solid #e9ecef; padding-bottom: 8px;">
+                                    <i class="fas fa-user me-2" style="color: #198754;"></i>Personal Information
+                                </h6>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="profileName" class="form-label" style="font-weight: 600; color: #495057; margin-bottom: 8px;">
+                                    Full Name <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" class="form-control" id="profileName" name="name" required 
+                                       style="border-radius: 8px; padding: 12px 16px; border: 2px solid #e9ecef; font-size: 0.95rem;"
+                                       placeholder="Enter your full name">
+                                <div class="invalid-feedback" style="font-size: 0.85rem;">
+                                    Please provide a valid name.
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="profileEmail" class="form-label" style="font-weight: 600; color: #495057; margin-bottom: 8px;">
+                                    Email Address <span class="text-danger">*</span>
+                                </label>
+                                <input type="email" class="form-control" id="profileEmail" name="email" required readonly 
+                                       style="border-radius: 8px; padding: 12px 16px; border: 2px solid #e9ecef; background: #f8f9fa; font-size: 0.95rem;"
+                                       placeholder="your.email@example.com">
+                                <small class="form-text text-muted" style="font-size: 0.8rem;">Email cannot be changed for security reasons</small>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="profilePhone" class="form-label" style="font-weight: 600; color: #495057; margin-bottom: 8px;">
+                                    Phone Number
+                                </label>
+                                <input type="tel" class="form-control" id="profilePhone" name="phoneNumber" 
+                                       style="border-radius: 8px; padding: 12px 16px; border: 2px solid #e9ecef; font-size: 0.95rem;"
+                                       placeholder="+1 (555) 123-4567"
+                                       pattern="[+]?[0-9\s\-\(\)]+">
+                                <div class="invalid-feedback" style="font-size: 0.85rem;">
+                                    Please provide a valid phone number.
+                                </div>
+                            </div>
+
+                            <!-- Location Information Section -->
+                            <div class="col-12 mt-4">
+                                <h6 class="section-title mb-3" style="color: #495057; font-weight: 600; font-size: 1rem; border-bottom: 2px solid #e9ecef; padding-bottom: 8px;">
+                                    <i class="fas fa-map-marker-alt me-2" style="color: #198754;"></i>Location Information
+                                </h6>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="profileCity" class="form-label" style="font-weight: 600; color: #495057; margin-bottom: 8px;">
+                                    City
+                                </label>
+                                <input type="text" class="form-control" id="profileCity" name="city" 
+                                       style="border-radius: 8px; padding: 12px 16px; border: 2px solid #e9ecef; font-size: 0.95rem;"
+                                       placeholder="Enter your city">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="profileState" class="form-label" style="font-weight: 600; color: #495057; margin-bottom: 8px;">
+                                    State/Province
+                                </label>
+                                <input type="text" class="form-control" id="profileState" name="state" 
+                                       style="border-radius: 8px; padding: 12px 16px; border: 2px solid #e9ecef; font-size: 0.95rem;"
+                                       placeholder="Enter your state">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="profilePostalCode" class="form-label" style="font-weight: 600; color: #495057; margin-bottom: 8px;">
+                                    Postal Code
+                                </label>
+                                <input type="text" class="form-control" id="profilePostalCode" name="postalCode" 
+                                       style="border-radius: 8px; padding: 12px 16px; border: 2px solid #e9ecef; font-size: 0.95rem;"
+                                       placeholder="12345">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="profileCountry" class="form-label" style="font-weight: 600; color: #495057; margin-bottom: 8px;">
+                                    Country
+                                </label>
+                                <input type="text" class="form-control" id="profileCountry" name="country" 
+                                       style="border-radius: 8px; padding: 12px 16px; border: 2px solid #e9ecef; font-size: 0.95rem;"
+                                       placeholder="Enter your country">
+                            </div>
+
+                            <div class="col-12">
+                                <label for="profileAddress" class="form-label" style="font-weight: 600; color: #495057; margin-bottom: 8px;">
+                                    Street Address
+                                </label>
+                                <textarea class="form-control" id="profileAddress" name="address" rows="2"
+                                          style="border-radius: 8px; padding: 12px 16px; border: 2px solid #e9ecef; font-size: 0.95rem; resize: vertical;"
+                                          placeholder="Enter your complete address"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer" style="border: none; padding: 24px 32px; background: #f8f9fa; border-radius: 0 0 16px 16px;">
+                    <button type="button" class="btn btn-outline-secondary me-2" data-bs-dismiss="modal" style="border-radius: 8px; padding: 10px 20px; font-weight: 500;">
+                        <i class="fas fa-times me-2"></i>Cancel
+                    </button>
+                    <button type="submit" form="profileEditForm" class="btn btn-primary" id="saveProfileBtn" style="background: linear-gradient(135deg, #198754 0%, #20c997 100%); border: none; border-radius: 8px; padding: 10px 24px; font-weight: 500;">
+                        <i class="fas fa-save me-2"></i>Save Changes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script th:inline="javascript">
         document.addEventListener('DOMContentLoaded', function() {
-            // Initialize components
-            initializeSidebar();
-            loadAnalysisStats();
-            loadRecentActivity();
-            loadUserProfile();
-            loadAnalysisLimits();
+            // Initialize tooltips
+            const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+            const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 
-            // Sidebar functionality
-            function initializeSidebar() {
-                const sidebar = document.getElementById('sidebar');
-                const mainContent = document.getElementById('mainContent');
-                const sidebarToggle = document.getElementById('sidebarToggle');
-
-                sidebarToggle.addEventListener('click', function() {
-                    sidebar.classList.toggle('expanded');
-                    mainContent.classList.toggle('expanded');
-                });
-
-                // Close sidebar when clicking outside on mobile
-                document.addEventListener('click', function(event) {
-                    if (window.innerWidth <= 768) {
-                        if (!sidebar.contains(event.target) && !sidebarToggle.contains(event.target)) {
-                            sidebar.classList.remove('expanded');
-                            mainContent.classList.remove('expanded');
+            // Handle modal close button
+            const modalCloseButtons = document.querySelectorAll('.modal .btn-close');
+            modalCloseButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const modal = this.closest('.modal');
+                    if (modal) {
+                        const bsModal = bootstrap.Modal.getInstance(modal);
+                        if (bsModal) {
+                            bsModal.hide();
                         }
-                    }
-                });
-
-                // Handle sidebar navigation
-                document.querySelectorAll('.sidebar-item').forEach(item => {
-                    item.addEventListener('click', function(e) {
-                        const href = this.getAttribute('href');
-                        if (href.startsWith('#')) {
-                            e.preventDefault();
-                            const target = document.querySelector(href);
-                            if (target) {
-                                target.scrollIntoView({ behavior: 'smooth' });
-                            }
-                        }
-                        
-                        // Update active state
-                        document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
-                        this.classList.add('active');
-                    });
-                });
-            }
-
-            // Load analysis statistics
-            async function loadAnalysisStats() {
-                try {
-                    const response = await fetch('/analysis/api/stats', {
-                        credentials: 'include'
-                    });
-                    
-                    if (!response.ok) {
-                        console.warn('Stats API returned error:', response.status);
-                        updateStatsDisplay(0, 0, 0);
-                        return;
-                    }
-                    
-                    const stats = await response.json();
-                    
-                    // Check if response contains error
-                    if (stats.error) {
-                        console.warn('Stats API error:', stats.error);
-                        updateStatsDisplay(0, 0, 0);
-                        return;
-                    }
-                    
-                    updateStatsDisplay(
-                        stats.totalAnalyses || 0,
-                        stats.healthyPlants || 0,
-                        stats.diseasedPlants || 0
-                    );
-                    
-                    // Update analysis limits
-                    updateAnalysisLimits(stats);
-                    
-                    // Animate counters
-                    animateCounters();
-                } catch (error) {
-                    console.error('Error loading stats:', error);
-                    updateStatsDisplay(0, 0, 0);
-                }
-            }
-
-            function updateAnalysisLimits(stats) {
-                const limitCard = document.getElementById('limitCard');
-                const limitIcon = document.getElementById('limitIcon');
-                const limitTitle = document.getElementById('limitTitle');
-                const limitDescription = document.getElementById('limitDescription');
-                const progressFill = document.getElementById('progressFill');
-                const progressText = document.getElementById('progressText');
-                const subscriptionStatus = document.getElementById('subscriptionStatus');
-                const analyzeBtn = document.getElementById('analyzeBtn');
-                const upgradeBtn = document.getElementById('upgradeBtn');
-
-                const hasSubscription = stats.hasActiveSubscription || false;
-                const used = stats.freeAnalysesUsed || 0;
-                const limit = stats.freeAnalysesLimit || 10;
-                const remaining = stats.remainingFreeAnalyses || 0;
-                const canAnalyze = stats.canPerformAnalysis || false;
-
-                // Reset classes
-                limitCard.className = 'limit-card';
-                progressFill.className = 'progress-fill';
-
-                if (hasSubscription) {
-                    // User has active subscription
-                    limitCard.classList.add('subscription-active');
-                    limitIcon.innerHTML = '<i class="fas fa-crown"></i>';
-                    limitTitle.textContent = 'Premium Subscription Active';
-                    limitDescription.textContent = 'Unlimited analyses available';
-                    progressFill.style.width = '100%';
-                    progressFill.classList.add('success');
-                    progressText.innerHTML = '<span>Unlimited</span>';
-                    subscriptionStatus.innerHTML = '<span class="badge bg-success">Premium</span>';
-                    analyzeBtn.style.display = 'inline-flex';
-                    upgradeBtn.style.display = 'none';
-                } else if (canAnalyze) {
-                    // User has remaining free analyses
-                    limitIcon.innerHTML = '<i class="fas fa-chart-line"></i>';
-                    limitTitle.textContent = 'Free Analyses Remaining';
-                    limitDescription.textContent = `You have ${remaining} free analyses left`;
-                    
-                    const percentage = (used / limit) * 100;
-                    progressFill.style.width = percentage + '%';
-                    
-                    if (percentage >= 80) {
-                        progressFill.classList.add('danger');
-                    }
-                    
-                    progressText.innerHTML = `<span>${used} / ${limit} used</span>`;
-                    subscriptionStatus.innerHTML = '<span class="badge bg-primary">Free Plan</span>';
-                    analyzeBtn.style.display = 'inline-flex';
-                    upgradeBtn.style.display = 'inline-flex';
-                } else {
-                    // User has exceeded free limit
-                    limitCard.classList.add('limit-exceeded');
-                    limitIcon.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
-                    limitTitle.textContent = 'Free Limit Exceeded';
-                    limitDescription.textContent = 'Subscribe to continue analyzing plants';
-                    progressFill.style.width = '100%';
-                    progressFill.classList.add('danger');
-                    progressText.innerHTML = `<span>${used} / ${limit} used</span>`;
-                    subscriptionStatus.innerHTML = '<span class="badge bg-danger">Limit Exceeded</span>';
-                    analyzeBtn.style.display = 'none';
-                    upgradeBtn.style.display = 'inline-flex';
-                    upgradeBtn.textContent = 'Subscribe Now';
-                    upgradeBtn.innerHTML = '<i class="fas fa-crown me-2"></i>Subscribe Now';
-                }
-            }
-
-            function updateStatsDisplay(total, healthy, diseased) {
-                document.getElementById('totalAnalyses').textContent = total;
-                document.getElementById('healthyPlants').textContent = healthy;
-                document.getElementById('diseasedPlants').textContent = diseased;
-            }
-
-            function animateCounters() {
-                const counters = document.querySelectorAll('.stat-value');
-                counters.forEach(counter => {
-                    const target = parseInt(counter.textContent);
-                    if (isNaN(target)) return;
-                    
-                    let current = 0;
-                    const increment = target / 30;
-                    const timer = setInterval(() => {
-                        current += increment;
-                        if (current >= target) {
-                            counter.textContent = target;
-                            clearInterval(timer);
-                        } else {
-                            counter.textContent = Math.floor(current);
-                        }
-                    }, 50);
-                });
-            }
-
-            // Load recent activity
-            async function loadRecentActivity() {
-                try {
-                    const response = await fetch('/analysis/api/history');
-                    const history = await response.json();
-                    const container = document.getElementById('analysisHistory');
-                    
-                    if (!Array.isArray(history) || history.length === 0) {
-                        container.innerHTML = `
-                            <div class="text-center text-muted py-4">
-                                <i class="fas fa-leaf fa-3x mb-3 opacity-50"></i>
-                                <p>No recent activity found. Start by analyzing your first plant!</p>
-                                <a href="/analysis/page" class="action-btn">Analyze Now</a>
-                            </div>
-                        `;
-                        return;
-                    }
-                    
-                    container.innerHTML = history.slice(0, 5).map(item => `
-                        <div class="activity-item">
-                            <div class="activity-icon ${item.disease && item.disease.toLowerCase().includes('healthy') ? 'healthy' : 'diseased'}">
-                                <i class="fas ${item.disease && item.disease.toLowerCase().includes('healthy') ? 'fa-leaf' : 'fa-bug'}"></i>
-                            </div>
-                            <div class="activity-content">
-                                <div class="activity-title">
-                                    ${item.plantName || 'Plant'} Analysis
-                                </div>
-                                <div class="activity-meta">
-                                    ${item.disease || 'Unknown'} • ${(item.confidence * 100).toFixed(1)}% confidence • ${new Date(item.analysisDate).toLocaleDateString()}
-                                </div>
-                            </div>
-                        </div>
-                    `).join('');
-                    
-                    if (history.length >= 5) {
-                        container.innerHTML += `
-                            <div class="text-center mt-3">
-                                <a href="/analysis/history" class="action-btn">View All History</a>
-                            </div>
-                        `;
-                    }
-                } catch (error) {
-                    console.error('Error loading recent activity:', error);
-                    document.getElementById('analysisHistory').innerHTML = `
-                        <div class="text-center text-danger py-4">
-                            <i class="fas fa-exclamation-triangle fa-2x mb-3"></i>
-                            <p>Error loading recent activity</p>
-                        </div>
-                    `;
-                }
-            }
-
-            // Load user profile
-            async function loadUserProfile() {
-                try {
-                    const response = await fetch('/api/user/profile');
-                    const profile = await response.json();
-                    
-                    if (profile.status === 'error') {
-                        console.error('Error loading profile:', profile.message);
-                        return;
-                    }
-
-                    // Update dropdown if elements exist
-                    const dropdownUserName = document.getElementById('dropdownUserName');
-                    const dropdownUserEmail = document.getElementById('dropdownUserEmail');
-                    
-                    if (dropdownUserName) {
-                        dropdownUserName.textContent = profile.name || 'Guest';
-                    }
-                    if (dropdownUserEmail) {
-                        dropdownUserEmail.textContent = profile.email || 'Not logged in';
-                    }
-
-                    // Update navbar stats
-                    if (profile.stats) {
-                        const totalAnalysesCount = document.getElementById('totalAnalysesCount');
-                        if (totalAnalysesCount) {
-                            totalAnalysesCount.textContent = profile.stats.totalAnalyses || 0;
-                        }
-                    }
-                } catch (error) {
-                    console.error('Error loading user profile:', error);
-                }
-            }
-
-            // Load analysis limits for navbar
-            async function loadAnalysisLimits() {
-                try {
-                    const response = await fetch('/analysis/api/limits');
-                    const data = await response.json();
-                    
-                    if (data.status === 'success') {
-                        const remainingAnalysesCount = document.getElementById('remainingAnalysesCount');
-                        if (remainingAnalysesCount) {
-                            remainingAnalysesCount.textContent = data.remainingAnalyses;
-                        }
-                    }
-                } catch (error) {
-                    console.error('Error loading analysis limits:', error);
-                }
-            }
-
-            // Smooth scrolling for anchor links
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const target = document.querySelector(this.getAttribute('href'));
-                    if (target) {
-                        target.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
                     }
                 });
             });
 
-            // Add scroll-based animations
-            const observerOptions = {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
-            };
-
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.opacity = '1';
-                        entry.target.style.transform = 'translateY(0)';
-                    }
+            // Handle aria-hidden for modals
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                modal.addEventListener('show.bs.modal', function() {
+                    this.removeAttribute('aria-hidden');
                 });
-            }, observerOptions);
-
-            document.querySelectorAll('.animate-fadein').forEach(el => {
-                observer.observe(el);
+                modal.addEventListener('hide.bs.modal', function() {
+                    // Wait for the modal to fully hide before setting aria-hidden
+                    setTimeout(() => {
+                        if (!this.classList.contains('show')) {
+                            this.setAttribute('aria-hidden', 'true');
+                        }
+                    }, 300);
+                });
             });
+
+            // Initialize any other components
+            initializeComponents();
         });
+
+        function initializeComponents() {
+            // Add any additional component initialization here
+            const dropdowns = document.querySelectorAll('.dropdown-toggle');
+            dropdowns.forEach(dropdown => {
+                new bootstrap.Dropdown(dropdown);
+            });
+        }
     </script>
+    <script src="/js/profile.js"></script>
 </body>
 </html> 

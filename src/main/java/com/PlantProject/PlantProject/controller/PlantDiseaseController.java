@@ -28,6 +28,7 @@ import com.PlantProject.PlantProject.model.User;
 import com.PlantProject.PlantProject.model.AnalysisResult;
 import com.PlantProject.PlantProject.service.AnalysisService;
 import com.PlantProject.PlantProject.service.UserService;
+import com.PlantProject.PlantProject.service.SubscriptionService;
 
 @RestController
 @RequestMapping("/api")
@@ -49,7 +50,10 @@ public class PlantDiseaseController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/analyze")
+    @Autowired
+    private SubscriptionService subscriptionService;
+
+    @PostMapping(value = "/analyze", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> analyzePlant(
             @RequestParam("image") MultipartFile image,
             @RequestParam(value = "plantType", required = true) String plantType) {
@@ -71,10 +75,13 @@ public class PlantDiseaseController {
             response.put("plantName", analysisResult.getPlantName());
             response.put("analysisDate", analysisResult.getAnalysisDate());
             logger.info("Returning analysis response for user {}", user != null ? user.getEmail() : "null");
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(response);
         } catch (Exception e) {
             logger.error("Failed to analyze plant image", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .contentType(MediaType.APPLICATION_JSON)
                 .body(Map.of(
                     "status", "error",
                     "error", e.getMessage()
@@ -126,11 +133,17 @@ public class PlantDiseaseController {
     public ResponseEntity<?> getUserProfile() {
         try {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            logger.info("Authentication object: {}", auth);
-            logger.info("Authentication name: {}", auth != null ? auth.getName() : "null");
-            logger.info("Authentication principal: {}", auth != null ? auth.getPrincipal() : "null");
-            logger.info("Authentication authorities: {}", auth != null ? auth.getAuthorities() : "null");
-            logger.info("Is authenticated: {}", auth != null ? auth.isAuthenticated() : "false");
+            
+            // Detailed authentication logging
+            logger.info("========== User Profile Request ==========");
+            logger.info("Authentication details:");
+            logger.info("Is auth null? {}", auth == null);
+            logger.info("Auth class: {}", auth != null ? auth.getClass().getName() : "null");
+            logger.info("Auth name: {}", auth != null ? auth.getName() : "null");
+            logger.info("Principal class: {}", auth != null && auth.getPrincipal() != null ? auth.getPrincipal().getClass().getName() : "null");
+            logger.info("Principal details: {}", auth != null ? auth.getPrincipal() : "null");
+            logger.info("Is authenticated? {}", auth != null ? auth.isAuthenticated() : "false");
+            logger.info("Authorities: {}", auth != null ? auth.getAuthorities() : "null");
             
             if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getName())) {
                 logger.warn("User not authenticated - auth: {}, name: {}", auth, auth != null ? auth.getName() : "null");
@@ -155,6 +168,11 @@ public class PlantDiseaseController {
             }
 
             logger.info("Found user: {} (id: {})", user.getEmail(), user.getId());
+            logger.info("User details - name: {}, email: {}", user.getName(), user.getEmail());
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "success");
+            
             Map<String, Object> profile = new HashMap<>();
             profile.put("name", user.getName());
             profile.put("email", user.getEmail());
@@ -166,62 +184,25 @@ public class PlantDiseaseController {
             profile.put("postalCode", user.getPostalCode());
             profile.put("country", user.getCountry());
             profile.put("profilePicture", user.getProfilePicture());
+            
+            boolean hasSubscription = subscriptionService.hasActiveSubscription(user);
+            logger.info("User subscription status: {}", hasSubscription);
+            profile.put("hasActiveSubscription", hasSubscription);
+            
             // Get user's analysis stats
             Map<String, Object> stats = analysisService.getUserAnalysisStats(user);
             profile.put("stats", stats);
-            return ResponseEntity.ok(profile);
+            
+            response.put("user", profile);
+            
+            logger.info("Returning profile response: {}", response);
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             logger.error("Error fetching user profile", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of(
                     "status", "error",
                     "message", "Error fetching user profile: " + e.getMessage()
-                ));
-        }
-    }
-
-    @PutMapping("/user/profile")
-    public ResponseEntity<?> updateUserProfile(@RequestBody Map<String, Object> updates) {
-        try {
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getName())) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of(
-                        "status", "error",
-                        "message", "User not authenticated"
-                    ));
-            }
-            
-            User user = userService.findByEmail(auth.getName());
-            if (user == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of(
-                        "status", "error",
-                        "message", "User not found"
-                    ));
-            }
-            
-            // Update user fields
-            if (updates.containsKey("name")) user.setName((String) updates.get("name"));
-            if (updates.containsKey("phoneNumber")) user.setPhoneNumber((String) updates.get("phoneNumber"));
-            if (updates.containsKey("address")) user.setAddress((String) updates.get("address"));
-            if (updates.containsKey("city")) user.setCity((String) updates.get("city"));
-            if (updates.containsKey("state")) user.setState((String) updates.get("state"));
-            if (updates.containsKey("postalCode")) user.setPostalCode((String) updates.get("postalCode"));
-            if (updates.containsKey("country")) user.setCountry((String) updates.get("country"));
-            if (updates.containsKey("profilePicture")) user.setProfilePicture((String) updates.get("profilePicture"));
-
-            // Save user
-            User savedUser = userService.saveUser(user);
-            logger.info("User profile updated successfully for: {}", savedUser.getEmail());
-            
-            return ResponseEntity.ok(Map.of("status", "success", "message", "Profile updated successfully"));
-        } catch (Exception e) {
-            logger.error("Error updating user profile", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(Map.of(
-                    "status", "error",
-                    "message", "Error updating user profile: " + e.getMessage()
                 ));
         }
     }
