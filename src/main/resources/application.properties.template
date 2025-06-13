@@ -19,3 +19,70 @@ spring.security.oauth2.client.registration.google.scope=email,profile
 # Logging Configuration
 logging.level.org.springframework.security=DEBUG
 logging.level.com.PlantProject=DEBUG 
+
+
+
+spring.application.name=PlantProject
+
+server.port=8080
+
+spring.datasource.url=jdbc:mysql://localhost:3306/plant_disease_db
+spring.datasource.username=root
+spring.datasource.password=Ashutosh$&@8877
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
+
+# Google OAuth2 Configuration
+spring.security.oauth2.client.registration.google.client-id=315561411661-v1maipd2sd8b6pk6hd6kcect8qp26hlr.apps.googleusercontent.com
+spring.security.oauth2.client.registration.google.client-secret=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
+spring.security.oauth2.client.registration.google.scope=email,profile
+spring.security.oauth2.client.registration.google.redirect-uri=http://localhost:8080/login/oauth2/code/google
+
+# Session Configuration
+server.servlet.session.timeout=30m
+spring.session.jdbc.initialize-schema=always
+spring.session.jdbc.table-name=SPRING_SESSION
+
+# File Upload Configuration
+file.upload-dir=${user.dir}/uploads
+spring.servlet.multipart.max-file-size=10MB
+spring.servlet.multipart.max-request-size=10MB
+
+# Static Resource Configuration
+spring.web.resources.static-locations=classpath:/static/,file:${file.upload-dir}/
+
+# Python App Configuration
+python.app.path=${user.dir}/python_app
+python.executable.path=/Library/Frameworks/Python.framework/Versions/3.12/bin/python3
+
+# Thymeleaf Configuration
+spring.thymeleaf.cache=false
+
+# Logging Configuration
+logging.level.org.springframework.security=DEBUG
+logging.level.com.PlantProject=DEBUG
+
+# Upload path configuration
+upload.path=${user.dir}/uploads
+
+# Razorpay Configuration
+razorpay.key.id=rzp_test_4gopPKeGUivJJK
+razorpay.key.secret=6uOyhiz73m0zukqXJ0Opt391
+
+# Email Configuration
+spring.mail.host=smtp.gmail.com
+spring.mail.port=587
+spring.mail.username=ashutoshrana972@gmail.com
+spring.mail.password=rvyz jxcg whqb kokx
+spring.mail.properties.mail.smtp.auth=true
+spring.mail.properties.mail.smtp.starttls.enable=true
+spring.mail.properties.mail.smtp.starttls.required=true
+spring.mail.properties.mail.smtp.ssl.trust=smtp.gmail.com
+
+# OTP Configuration
+otp.expiration.minutes=5
+otp.length=6
