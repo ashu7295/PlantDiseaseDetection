@@ -7,433 +7,701 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --warning-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            --danger-gradient: linear-gradient(135deg, #ff6b6b 0%, #ffa726 100%);
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --card-hover-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            --border-radius: 20px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
         body {
-            background: linear-gradient(135deg, #43cea2 0%, #185a9d 100%);
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             min-height: 100vh;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         }
-        .navbar-brand {
-            color: #4CAF50 !important;
-            font-weight: 600;
-            font-size: 1.5rem;
-        }
-        .nav-link {
-            color: #2c3e50 !important;
-            font-weight: 500;
-        }
-        .nav-link:hover {
-            color: #4CAF50 !important;
-        }
-        .main-container, .about-section, .features-section, .user-profile, .history-section {
-            background: rgba(255,255,255,0.92);
-            border-radius: 24px;
-            box-shadow: 0 8px 32px rgba(44, 62, 80, 0.10);
-        }
-        .upload-container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            padding: 40px;
-            margin-bottom: 40px;
-        }
-        .upload-header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-        .upload-header h1 {
-            color: #2c3e50;
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-        .upload-header p {
-            color: #7f8c8d;
-            font-size: 1.1rem;
-        }
-        .form-control {
-            border-radius: 10px;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            margin-bottom: 20px;
-        }
-        .form-control:focus {
-            border-color: #4CAF50;
-            box-shadow: none;
-        }
-        .btn-analyze {
-            background: #4CAF50;
-            border: none;
-            border-radius: 10px;
-            padding: 12px 30px;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-        }
-        .btn-analyze:hover {
-            background: #45a049;
-            transform: translateY(-2px);
-        }
-        .result-container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            padding: 40px;
-            margin-top: 40px;
-            display: none;
-        }
-        .result-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .result-header h2 {
-            color: #2c3e50;
-            font-size: 2rem;
-            margin-bottom: 10px;
-        }
-        .result-content {
-            text-align: center;
-        }
-        .result-image {
-            max-width: 300px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-        .confidence-bar {
-            height: 20px;
-            background: #e0e0e0;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            overflow: hidden;
-        }
-        .confidence-fill {
-            height: 100%;
-            background: #4CAF50;
-            border-radius: 10px;
-            transition: width 0.3s ease;
-        }
-        .confidence-label {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 5px;
-        }
-        .loading {
-            display: none;
-            text-align: center;
-            margin: 20px 0;
-        }
-        .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #4CAF50;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .error-message {
-            background: #ffebee;
-            color: #c62828;
-            padding: 15px;
-            border-radius: 10px;
-            margin: 20px 0;
-            text-align: center;
-            display: none;
-        }
-        .features-section {
-            padding: 60px 0;
-            background: white;
-            margin: 40px 0;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-        .feature-card {
-            text-align: center;
-            padding: 30px;
-            border-radius: 15px;
-            transition: all 0.3s ease;
-            background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
-            color: #6b46c1;
-            border-radius: 18px;
-            box-shadow: 0 8px 32px rgba(44, 62, 80, 0.06);
-        }
-        .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 40px rgba(44, 62, 80, 0.08);
-        }
-        .feature-icon {
-            font-size: 2.5rem;
-            color: #9f7aea;
-            margin-bottom: 20px;
-        }
-        .about-section {
-            background: linear-gradient(135deg, #f8ffae 0%, #43cea2 100%);
-            padding: 60px 0;
-            margin: 40px 0;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-        .user-profile {
-            background: white;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            margin-bottom: 40px;
-        }
-        .profile-header {
-            text-align: center;
-            margin-bottom: 30px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .profile-avatar {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: #4CAF50;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-        }
-        .history-section {
-            background: white;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            margin-bottom: 40px;
-        }
-        .history-item {
-            padding: 15px;
-            border-bottom: 1px solid #e0e0e0;
-        }
-        .history-item:last-child {
-            border-bottom: none;
-        }
-        .footer {
-            background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
-            padding: 40px 0;
-            margin-top: 60px;
-            box-shadow: 0 -2px 10px rgba(44, 62, 80, 0.04);
-            transition: margin-left 0.3s ease, width 0.3s ease;
-        }
-        .footer.shifted {
-            margin-left: 250px;
-            width: calc(100% - 250px);
-        }
-        @media (max-width: 991.98px) {
-            .footer.shifted {
-                margin-left: 0;
-                width: 100%;
-            }
-        }
-        .footer-link {
-            color: #6b7c93;
-            text-decoration: none;
-            margin: 0 15px;
-            transition: color 0.3s ease;
-        }
-        .footer-link:hover {
-            color: #4a90e2;
-        }
-        .footer-copyright {
-            color: #8b9db3;
-        }
-        .upload-area {
-            border: 2px dashed #ccc;
-            border-radius: 10px;
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .upload-area:hover {
-            border-color: #0d6efd;
-            background-color: #f8f9fa;
-        }
-        .upload-area.dragover {
-            border-color: #0d6efd;
-            background-color: #e9ecef;
-        }
-        .preview-image {
-            max-width: 100%;
-            max-height: 300px;
-            margin-top: 10px;
-        }
-        .result-card {
-            display: none;
-            margin-top: 20px;
-        }
-        .history-item {
-            border-left: 4px solid #0d6efd;
-            margin-bottom: 10px;
-            padding: 10px;
-            background-color: #f8f9fa;
-        }
-        .history-item.healthy {
-            border-left-color: #198754;
-        }
-        .history-item.diseased {
-            border-left-color: #dc3545;
-        }
-        .profile-section {
-            background-color: #f8f9fa;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        .profile-avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background-color: #0d6efd;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            margin-right: 20px;
-        }
-        .profile-info {
-            flex-grow: 1;
-        }
-        .profile-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
-        }
-        .stat-card {
-            background: linear-gradient(135deg, #f0f7ff 0%, #e6f3ff 100%);
-            border-radius: 18px;
-            box-shadow: 0 8px 32px rgba(44, 62, 80, 0.06);
-            padding: 15px;
-            text-align: center;
-        }
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #4a90e2;
-        }
-        .stat-label {
-            color: #6b7c93;
-            font-size: 0.9rem;
-        }
-        .stat-icon {
-            filter: drop-shadow(0 2px 8px rgba(67, 206, 162, 0.15));
-        }
+
+        /* Enhanced Sidebar */
         .sidebar {
             position: fixed;
             left: 0;
             top: 0;
             height: 100vh;
-            width: 60px;
-            background: linear-gradient(180deg, #43cea2 0%, #185a9d 100%);
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-            transition: width 0.3s ease;
+            width: 80px;
+            background: var(--primary-gradient);
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+            transition: var(--transition);
             z-index: 1000;
-            padding-top: 70px;
+            padding-top: 80px;
+            backdrop-filter: blur(10px);
         }
+
         .sidebar.expanded {
-            width: 250px;
+            width: 280px;
         }
+
         .sidebar-item {
             display: flex;
             align-items: center;
-            padding: 15px;
+            padding: 18px 20px;
             color: white;
             text-decoration: none;
-            transition: all 0.3s ease;
+            transition: var(--transition);
             white-space: nowrap;
             overflow: hidden;
-            border-left: 3px solid transparent;
+            border-left: 4px solid transparent;
+            margin: 5px 0;
         }
+
         .sidebar-item:hover {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.15);
             color: white;
-            border-left: 3px solid white;
+            border-left: 4px solid white;
+            transform: translateX(5px);
         }
+
         .sidebar-item.active {
             background: rgba(255, 255, 255, 0.2);
-            border-left: 3px solid white;
+            border-left: 4px solid white;
         }
+
         .sidebar-item i {
-            min-width: 30px;
-            font-size: 1.2rem;
+            min-width: 40px;
+            font-size: 1.3rem;
+            text-align: center;
         }
+
         .sidebar-item span {
             margin-left: 15px;
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: var(--transition);
             font-weight: 500;
+            font-size: 1rem;
         }
+
         .sidebar.expanded .sidebar-item span {
             opacity: 1;
         }
+
+        /* Enhanced Main Content */
         .main-content {
-            margin-left: 60px;
-            transition: margin-left 0.3s ease;
+            margin-left: 80px;
+            transition: var(--transition);
+            min-height: 100vh;
         }
+
         .main-content.expanded {
-            margin-left: 250px;
+            margin-left: 280px;
         }
+
+        /* Modern Hamburger Button */
         .hamburger {
             position: fixed;
-            left: 15px;
-            top: 15px;
+            left: 20px;
+            top: 20px;
             z-index: 1001;
-            background: #4CAF50;
+            background: var(--primary-gradient);
             border: none;
-            padding: 10px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: var(--card-shadow);
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: var(--transition);
         }
+
         .hamburger:hover {
-            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: var(--card-hover-shadow);
         }
+
         .hamburger i {
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             color: white;
         }
-        .animate-fadein { opacity: 0; animation: fadeInUp 0.8s forwards; }
+
+        /* Enhanced Hero Section */
+        .hero-section {
+            background: var(--primary-gradient);
+            min-height: 400px;
+            border-radius: 0 0 50px 50px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 50px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #fff, #f0f0f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin-bottom: 30px;
+            font-weight: 300;
+        }
+
+        .hero-cta {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+        }
+
+        .hero-cta:hover {
+            background: white;
+            color: #667eea;
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Enhanced Stats Cards */
+        .stats-container {
+            margin: -80px 0 50px 0;
+            position: relative;
+            z-index: 10;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            padding: 30px;
+            text-align: center;
+            transition: var(--transition);
+            border: none;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-gradient);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--card-hover-shadow);
+        }
+
+        .stat-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 1.8rem;
+            color: white;
+        }
+
+        .stat-icon.total {
+            background: var(--primary-gradient);
+        }
+
+        .stat-icon.healthy {
+            background: var(--success-gradient);
+        }
+
+        .stat-icon.diseased {
+            background: var(--danger-gradient);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: #6c757d;
+            font-weight: 500;
+            font-size: 1rem;
+        }
+
+        /* Enhanced Quick Actions */
+        .quick-actions {
+            margin-bottom: 50px;
+        }
+
+        .action-card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            padding: 30px;
+            text-align: center;
+            transition: var(--transition);
+            border: none;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--card-hover-shadow);
+        }
+
+        .action-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 2rem;
+            color: white;
+            background: var(--primary-gradient);
+        }
+
+        .action-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .action-description {
+            color: #6c757d;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .action-btn {
+            background: var(--primary-gradient);
+            border: none;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+            color: white;
+        }
+
+        /* Enhanced Recent Activity */
+        .recent-activity {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            padding: 30px;
+            margin-bottom: 50px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 30px;
+            color: #2c3e50;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: var(--primary-gradient);
+            border-radius: 2px;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            transition: var(--transition);
+            border: 1px solid #f0f0f0;
+        }
+
+        .activity-item:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .activity-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .activity-icon.healthy {
+            background: var(--success-gradient);
+        }
+
+        .activity-icon.diseased {
+            background: var(--danger-gradient);
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+
+        .activity-meta {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        /* Enhanced Features Section */
+        .features-section {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            padding: 50px 30px;
+            margin-bottom: 50px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            text-align: center;
+            transition: var(--transition);
+            border: none;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--card-hover-shadow);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .feature-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .feature-description {
+            color: #6c757d;
+            line-height: 1.6;
+        }
+
+        /* Animations */
+        .animate-fadein {
+            opacity: 0;
+            animation: fadeInUp 0.8s forwards;
+        }
+
         .animate-fadein[style*="animation-delay: 0.2s"] { animation-delay: 0.2s; }
         .animate-fadein[style*="animation-delay: 0.4s"] { animation-delay: 0.4s; }
         .animate-fadein[style*="animation-delay: 0.6s"] { animation-delay: 0.6s; }
         .animate-fadein[style*="animation-delay: 0.8s"] { animation-delay: 0.8s; }
         .animate-fadein[style*="animation-delay: 1s"] { animation-delay: 1s; }
-        .animate-fadein[style*="animation-delay: 1.2s"] { animation-delay: 1.2s; }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: none; } }
-        .animate-hover { transition: transform 0.2s, box-shadow 0.2s; }
-        .animate-hover:hover { transform: translateY(-8px) scale(1.03); box-shadow: 0 8px 32px rgba(60,60,60,0.15); }
-        .feature-icon { font-size: 2.5rem; color: #43cea2; }
-        .recent-carousel::-webkit-scrollbar { height: 8px; background: #f8f9fa; }
-        .recent-carousel::-webkit-scrollbar-thumb { background: #43cea2; border-radius: 4px; }
-        .hero-section {
-            background: linear-gradient(135deg, #43cea2 0%, #185a9d 100%) !important;
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: none;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .main-content.expanded {
+                margin-left: 0;
+            }
+            
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.expanded {
+                transform: translateX(0);
+                width: 280px;
+            }
+            
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .stats-container {
+                margin-top: -60px;
+            }
+        }
+
+        /* Enhanced Footer */
+        .footer {
+            background: white;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.1);
+            padding: 40px 0;
+            margin-top: 50px;
+        }
+
+        .footer-link {
+            color: #6c757d;
+            text-decoration: none;
+            margin: 0 15px;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .footer-link:hover {
+            color: #667eea;
+        }
+
+        /* Analysis Limit Card */
+        .analysis-limit-container {
+            margin: 30px 0;
+        }
+
+        .limit-card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            padding: 30px;
+            border: none;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .limit-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--card-hover-shadow);
+        }
+
+        .limit-card.subscription-active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .limit-card.limit-exceeded {
+            border-left: 5px solid #e74c3c;
+        }
+
+        .limit-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .limit-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            font-size: 1.5rem;
+            color: white;
+            background: var(--primary-gradient);
+        }
+
+        .limit-card.subscription-active .limit-icon {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .limit-card.limit-exceeded .limit-icon {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        }
+
+        .limit-info h4 {
+            margin: 0 0 5px 0;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .limit-card.subscription-active .limit-info h4 {
+            color: white;
+        }
+
+        .limit-info p {
+            margin: 0;
+            color: #6c757d;
+            font-size: 1rem;
+        }
+
+        .limit-card.subscription-active .limit-info p {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .limit-progress {
+            margin-bottom: 25px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: #e9ecef;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .limit-card.subscription-active .progress-bar {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary-gradient);
+            border-radius: 6px;
+            transition: width 0.8s ease;
+            position: relative;
+        }
+
+        .progress-fill.danger {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        }
+
+        .progress-fill.success {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+        }
+
+        .limit-card.subscription-active .progress-fill {
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .limit-card.subscription-active .progress-text {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .limit-actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn.primary {
+            background: var(--primary-gradient);
+            color: white;
+        }
+
+        .action-btn.secondary {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            color: white;
+        }
+
+        .limit-card.subscription-active .action-btn.primary {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .limit-card.subscription-active .action-btn.primary:hover {
+            background: rgba(255, 255, 255, 0.3);
         }
     </style>
 </head>
 <body>
+    <!-- Enhanced Hamburger Button -->
     <button class="hamburger" id="sidebarToggle">
         <i class="fas fa-bars"></i>
     </button>
 
+    <!-- Enhanced Sidebar -->
     <div class="sidebar" id="sidebar">
-        <a href="#about" class="sidebar-item">
-            <i class="fas fa-info-circle"></i>
-            <span>About</span>
+        <a href="#dashboard" class="sidebar-item active">
+            <i class="fas fa-home"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="/analysis/page" class="sidebar-item">
+            <i class="fas fa-microscope"></i>
+            <span>Analyze Plant</span>
+        </a>
+        <a href="/analysis/history" class="sidebar-item">
+            <i class="fas fa-history"></i>
+            <span>History</span>
         </a>
         <a href="#features" class="sidebar-item">
             <i class="fas fa-star"></i>
             <span>Features</span>
         </a>
-        <a href="#history" class="sidebar-item">
-            <i class="fas fa-history"></i>
-            <span>History</span>
+        <a href="#about" class="sidebar-item">
+            <i class="fas fa-info-circle"></i>
+            <span>About</span>
         </a>
         <a href="/subscription" class="sidebar-item">
             <i class="fas fa-crown"></i>
@@ -441,419 +709,469 @@
         </a>
     </div>
 
+    <!-- Main Content -->
     <div class="main-content" id="mainContent">
+        <!-- Enhanced Navbar -->
         <div th:replace="~{dashboard-navbar :: dashboard-navbar}"></div>
 
-        <!-- UPLOAD SECTION (dedicated, prominent) -->
-        <!-- Upload section removed as per user request -->
+        <!-- Enhanced Hero Section -->
+        <section class="hero-section text-white d-flex align-items-center justify-content-center" id="dashboard">
+            <div class="container hero-content text-center">
+                <h1 class="hero-title animate-fadein">
+                    Welcome, <span th:text="${user != null ? user.name : 'Guest'}">User</span>!
+                </h1>
+                <p class="hero-subtitle animate-fadein" style="animation-delay: 0.2s;">
+                    Empowering you to detect plant diseases early and keep your crops healthy with AI-powered analysis.
+                </p>
+                <a href="/analysis/page" class="hero-cta animate-fadein" style="animation-delay: 0.4s;">
+                    <i class="fas fa-microscope me-2"></i>Start Analysis
+                </a>
+            </div>
+        </section>
 
-        <div class="main-container">
-            <div class="container">
-                <!-- HERO SECTION -->
-                <section class="hero-section text-white d-flex align-items-center justify-content-center" style="background: linear-gradient(135deg, #43cea2 0%, #185a9d 100%); min-height: 320px; border-radius: 0 0 40px 40px; box-shadow: 0 8px 32px rgba(60,60,60,0.10); margin-bottom: 40px;">
-                    <div class="container text-center">
-                        <h1 class="display-4 fw-bold mb-3 animate-fadein">Welcome, <span th:text="${user != null ? user.name : 'Guest'}">User</span>!</h1>
-                        <p class="lead mb-4 animate-fadein" style="animation-delay: 0.2s;">Empowering you to detect plant diseases early and keep your crops healthy.</p>
-                        <a href="/analyze" class="btn btn-lg btn-success shadow animate-fadein" style="animation-delay: 0.4s;">Analyze a Plant Now</a>
+        <div class="container">
+            <!-- Enhanced Stats Cards -->
+            <div class="stats-container animate-fadein" style="animation-delay: 0.6s;">
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="stat-card">
+                            <div class="stat-icon total">
+                                <i class="fas fa-chart-bar"></i>
+                            </div>
+                            <div class="stat-value" id="totalAnalyses">0</div>
+                            <div class="stat-label">Total Analyses</div>
+                        </div>
                     </div>
-                </section>
+                    <div class="col-md-4">
+                        <div class="stat-card">
+                            <div class="stat-icon healthy">
+                                <i class="fas fa-leaf"></i>
+                            </div>
+                            <div class="stat-value" id="healthyPlants">0</div>
+                            <div class="stat-label">Healthy Plants</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stat-card">
+                            <div class="stat-icon diseased">
+                                <i class="fas fa-bug"></i>
+                            </div>
+                            <div class="stat-value" id="diseasedPlants">0</div>
+                            <div class="stat-label">Diseased Plants</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                <!-- STATS CARDS -->
-                <div class="container mb-4 animate-fadein" style="animation-delay: 0.6s;">
-                    <div class="row g-4 justify-content-center">
-                        <div class="col-6 col-md-4">
-                            <div class="card stat-card shadow h-100 text-center p-4 animate-hover" style="border-radius: 18px;">
-                                <div class="stat-icon mb-2"><i class="fas fa-chart-bar fa-2x text-success"></i></div>
-                                <div class="stat-value display-6 fw-bold" id="totalAnalyses">0</div>
-                                <div class="stat-label">Total Analyses</div>
+            <!-- Analysis Limit Card -->
+            <div class="analysis-limit-container animate-fadein" style="animation-delay: 0.8s;" id="analysisLimitCard">
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="limit-card" id="limitCard">
+                            <div class="limit-header">
+                                <div class="limit-icon" id="limitIcon">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <div class="limit-info">
+                                    <h4 id="limitTitle">Free Analysis Remaining</h4>
+                                    <p id="limitDescription">You have free analyses available</p>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-6 col-md-4">
-                            <div class="card stat-card shadow h-100 text-center p-4 animate-hover" style="border-radius: 18px;">
-                                <div class="stat-icon mb-2"><i class="fas fa-leaf fa-2x text-success"></i></div>
-                                <div class="stat-value display-6 fw-bold" id="healthyPlants">0</div>
-                                <div class="stat-label">Healthy Plants</div>
+                            <div class="limit-progress">
+                                <div class="progress-bar" id="progressBar">
+                                    <div class="progress-fill" id="progressFill"></div>
+                                </div>
+                                <div class="progress-text">
+                                    <span id="progressText">0 / 10 used</span>
+                                    <span id="subscriptionStatus"></span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-12 col-md-4">
-                            <div class="card stat-card shadow h-100 text-center p-4 animate-hover" style="border-radius: 18px;">
-                                <div class="stat-icon mb-2"><i class="fas fa-bug fa-2x text-danger"></i></div>
-                                <div class="stat-value display-6 fw-bold" id="diseasedPlants">0</div>
-                                <div class="stat-label">Diseased Plants</div>
+                            <div class="limit-actions" id="limitActions">
+                                <a href="/analysis/page" class="action-btn primary" id="analyzeBtn">
+                                    <i class="fas fa-leaf me-2"></i>Analyze Plant
+                                </a>
+                                <a href="/subscription" class="action-btn secondary" id="upgradeBtn" style="display: none;">
+                                    <i class="fas fa-crown me-2"></i>Upgrade Plan
+                                </a>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- FEATURES SECTION -->
-                <div class="container mb-5 animate-fadein" style="animation-delay: 0.8s;">
-                    <h2 class="text-center mb-5 fw-bold">Our Features</h2>
-                    <div class="row g-4 justify-content-center">
-                        <div class="col-12 col-md-4">
-                            <div class="feature-card card h-100 text-center p-4 shadow animate-hover" style="border-radius: 18px;">
-                                <i class="fas fa-microscope feature-icon mb-3"></i>
-                                <h4>Advanced Detection</h4>
-                                <p>State-of-the-art AI models for high-accuracy plant disease detection.</p>
-                                <a href="#" class="stretched-link text-success">Learn More</a>
+            <!-- Enhanced Quick Actions -->
+            <div class="quick-actions animate-fadein" style="animation-delay: 0.8s;">
+                <h2 class="section-title">Quick Actions</h2>
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="action-card">
+                            <div class="action-icon">
+                                <i class="fas fa-camera"></i>
                             </div>
+                            <h3 class="action-title">Analyze Plant</h3>
+                            <p class="action-description">Upload a photo of your plant to get instant AI-powered disease detection and analysis.</p>
+                            <a href="/analysis/page" class="action-btn">Start Analysis</a>
                         </div>
-                        <div class="col-12 col-md-4">
-                            <div class="feature-card card h-100 text-center p-4 shadow animate-hover" style="border-radius: 18px;">
-                                <i class="fas fa-leaf feature-icon mb-3"></i>
-                                <h4>Multiple Plants</h4>
-                                <p>Support for apple, corn, grape, peach, tomato, and more.</p>
-                                <a href="#" class="stretched-link text-success">Learn More</a>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="action-card">
+                            <div class="action-icon">
+                                <i class="fas fa-history"></i>
                             </div>
+                            <h3 class="action-title">View History</h3>
+                            <p class="action-description">Review your previous plant analyses and track the health of your plants over time.</p>
+                            <a href="/analysis/history" class="action-btn">View History</a>
                         </div>
-                        <div class="col-12 col-md-4">
-                            <div class="feature-card card h-100 text-center p-4 shadow animate-hover" style="border-radius: 18px;">
-                                <i class="fas fa-chart-line feature-icon mb-3"></i>
-                                <h4>Detailed Analysis</h4>
-                                <p>Get confidence scores and detailed info about detected diseases.</p>
-                                <a href="#" class="stretched-link text-success">Learn More</a>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="action-card">
+                            <div class="action-icon">
+                                <i class="fas fa-crown"></i>
                             </div>
+                            <h3 class="action-title">Upgrade Plan</h3>
+                            <p class="action-description">Unlock premium features including unlimited analyses and advanced reporting.</p>
+                            <a href="/subscription" class="action-btn">Upgrade Now</a>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- About Section -->
-                <div class="about-section" id="about">
-                    <div class="container">
-                        <h2 class="text-center mb-5">About Plant Disease Detection</h2>
+            <!-- Enhanced Recent Activity -->
+            <div class="recent-activity animate-fadein" style="animation-delay: 1s;" id="recentActivity">
+                <h2 class="section-title">Recent Activity</h2>
+                <div id="analysisHistory">
+                    <div class="text-center text-muted py-4">
+                        <i class="fas fa-leaf fa-3x mb-3 opacity-50"></i>
+                        <p>No recent activity found. Start by analyzing your first plant!</p>
+                        <a href="/analysis/page" class="action-btn">Analyze Now</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Enhanced Features Section -->
+            <div class="features-section animate-fadein" style="animation-delay: 1.2s;" id="features">
+                <h2 class="section-title text-center">Why Choose Our Platform?</h2>
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-brain"></i>
+                            </div>
+                            <h3 class="feature-title">AI-Powered Detection</h3>
+                            <p class="feature-description">Advanced machine learning models trained on thousands of plant images for accurate disease identification.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-seedling"></i>
+                            </div>
+                            <h3 class="feature-title">Multiple Plant Types</h3>
+                            <p class="feature-description">Support for various crops including tomatoes, apples, corn, grapes, and peaches with expanding database.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <h3 class="feature-title">Detailed Analytics</h3>
+                            <p class="feature-description">Get comprehensive analysis reports with confidence scores and actionable recommendations.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Enhanced About Section -->
+            <div class="features-section animate-fadein" style="animation-delay: 1.4s;" id="about">
+                <h2 class="section-title text-center">About Plant Disease Detection</h2>
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <h4 class="mb-3">Our Mission</h4>
+                        <p class="mb-4">We're dedicated to helping farmers and gardeners detect plant diseases early, preventing crop loss and promoting sustainable agriculture through cutting-edge AI technology.</p>
+                        
+                        <h4 class="mb-3">How It Works</h4>
+                        <p>Our system uses state-of-the-art deep learning models trained on extensive datasets of plant images to provide accurate disease detection and analysis.</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h4 class="mb-3">Supported Plants</h4>
                         <div class="row">
-                            <div class="col-md-6">
-                                <h4>Our Mission</h4>
-                                <p>We aim to help farmers and gardeners detect plant diseases early, preventing crop loss and promoting sustainable agriculture.</p>
-                                <h4 class="mt-4">How It Works</h4>
-                                <p>Our system uses advanced machine learning models trained on thousands of plant images to accurately identify diseases and provide detailed analysis.</p>
-                            </div>
-                            <div class="col-md-6">
-                                <h4>Supported Plants</h4>
+                            <div class="col-6">
                                 <ul class="list-unstyled">
-                                    <li><i class="fas fa-check text-success me-2"></i>Apple Trees</li>
-                                    <li><i class="fas fa-check text-success me-2"></i>Corn Plants</li>
-                                    <li><i class="fas fa-check text-success me-2"></i>Grape Vines</li>
-                                    <li><i class="fas fa-check text-success me-2"></i>Peach Trees</li>
-                                    <li><i class="fas fa-check text-success me-2"></i>Tomato Plants</li>
+                                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Apple Trees</li>
+                                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Corn Plants</li>
+                                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Grape Vines</li>
+                                </ul>
+                            </div>
+                            <div class="col-6">
+                                <ul class="list-unstyled">
+                                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Peach Trees</li>
+                                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Tomato Plants</li>
+                                    <li class="mb-2"><i class="fas fa-plus text-muted me-2"></i>More Coming</li>
                                 </ul>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <!-- History Section -->
-                <!-- Recent Analysis History section removed as per user request -->
             </div>
         </div>
-    </div>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6">
-                    <h5>Plant Disease Detection</h5>
-                    <p class="text-muted">Helping farmers and gardeners protect their plants</p>
-                </div>
-                <div class="col-md-6 text-end">
-                    <a href="/terms" class="footer-link">Terms & Conditions</a>
-                    <a href="/privacy" class="footer-link">Privacy Policy</a>
-                    <a href="/contact" class="footer-link">Contact Us</a>
+        <!-- Enhanced Footer -->
+        <footer class="footer">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <h5 class="mb-2">Plant Disease Detection</h5>
+                        <p class="text-muted mb-0">Protecting crops with AI-powered analysis</p>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <a href="/terms" class="footer-link">Terms & Conditions</a>
+                        <a href="/privacy" class="footer-link">Privacy Policy</a>
+                        <a href="/contact" class="footer-link">Contact Us</a>
+                    </div>
                 </div>
             </div>
-        </div>
-    </footer>
-
-    <!-- User Profile Edit Modal -->
-    <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header bg-success text-white">
-            <h5 class="modal-title" id="editProfileModalLabel"><i class="fas fa-user-edit me-2"></i>Edit Profile</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <form id="profileEditForm">
-              <div class="mb-3">
-                <label for="profileName" class="form-label">Full Name</label>
-                <input type="text" class="form-control" id="profileName" name="name" required>
-              </div>
-              <div class="mb-3">
-                <label for="profileEmail" class="form-label">Email</label>
-                <input type="email" class="form-control" id="profileEmail" name="email" required readonly>
-              </div>
-              <div class="mb-3">
-                <label for="profilePhone" class="form-label">Phone Number</label>
-                <input type="text" class="form-control" id="profilePhone" name="phoneNumber">
-              </div>
-              <div class="mb-3">
-                <label for="profileAddress" class="form-label">Address</label>
-                <input type="text" class="form-control" id="profileAddress" name="address">
-              </div>
-              <div class="mb-3">
-                <label for="profileCity" class="form-label">City</label>
-                <input type="text" class="form-control" id="profileCity" name="city">
-              </div>
-              <div class="mb-3">
-                <label for="profileState" class="form-label">State</label>
-                <input type="text" class="form-control" id="profileState" name="state">
-              </div>
-              <div class="mb-3">
-                <label for="profilePostalCode" class="form-label">Postal Code</label>
-                <input type="text" class="form-control" id="profilePostalCode" name="postalCode">
-              </div>
-              <div class="mb-3">
-                <label for="profileCountry" class="form-label">Country</label>
-                <input type="text" class="form-control" id="profileCountry" name="country">
-              </div>
-              <div class="mb-3">
-                <label for="profilePicture" class="form-label">Profile Picture URL</label>
-                <input type="text" class="form-control" id="profilePicture" name="profilePicture">
-              </div>
-              <div id="profileSuccessMsg" class="alert alert-success d-none" role="alert">
-                Profile updated successfully!
-              </div>
-              <button type="submit" class="btn btn-success w-100">Save Changes</button>
-            </form>
-          </div>
-        </div>
-      </div>
+        </footer>
     </div>
 
-    <!-- User Profile Modal -->
-    <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header bg-success text-white">
-            <h5 class="modal-title" id="profileModalLabel"><i class="fas fa-user me-2"></i>My Profile</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <div class="text-center mb-4">
-              <img th:src="${user != null && user.profilePicture != null && !#strings.isEmpty(user.profilePicture) ? user.profilePicture : '/images/default-avatar.png'}" src="/images/default-avatar.png" alt="Profile Picture" class="rounded-circle mb-3" style="width: 100px; height: 100px; object-fit: cover; border: 3px solid #4CAF50;">
-              <h4 th:text="${user != null ? user.name : 'Guest'}">Name</h4>
-              <div class="text-muted" th:text="${user != null ? user.email : 'Not logged in'}">Email</div>
-            </div>
-            <ul class="list-group list-group-flush">
-              <li class="list-group-item"><strong>Contact:</strong> <span th:text="${user != null ? user.phoneNumber : '-'}">-</span></li>
-              <li class="list-group-item"><strong>User Type:</strong> <span th:text="${user != null ? user.userType : '-'}">-</span></li>
-              <li class="list-group-item"><strong>Address:</strong> <span th:text="${user != null ? user.address : '-'}">-</span></li>
-              <li class="list-group-item"><strong>Postal Code:</strong> <span th:text="${user != null ? user.postalCode : '-'}">-</span></li>
-              <li class="list-group-item"><strong>City:</strong> <span th:text="${user != null ? user.city : '-'}">-</span></li>
-              <li class="list-group-item"><strong>State:</strong> <span th:text="${user != null ? user.state : '-'}">-</span></li>
-              <li class="list-group-item"><strong>Country:</strong> <span th:text="${user != null ? user.country : '-'}">-</span></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
+    <!-- Modals -->
+    <div th:replace="~{dashboard-modals :: modals}"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
+    <script th:inline="javascript">
         document.addEventListener('DOMContentLoaded', function() {
-            // Always load stats on page load
+            // Initialize components
+            initializeSidebar();
             loadAnalysisStats();
-            // Only run upload/drag-and-drop code if the elements exist
-            const uploadForm = document.getElementById('uploadFormElement');
-            const uploadArea = document.getElementById('uploadArea');
-            const imageInput = document.getElementById('image');
-            const preview = document.getElementById('preview');
-            const analyzeBtn = uploadForm ? uploadForm.querySelector('.btn-analyze') : null;
-            const plantType = document.getElementById('plantType');
-            const resultCard = document.getElementById('resultCard');
-            const resultContent = document.getElementById('resultContent');
-            const loading = document.querySelector('.loading');
-            const historyList = document.getElementById('historyList');
-            const errorMessage = document.getElementById('errorMessage');
-            const sidebar = document.getElementById('sidebar');
-            const mainContent = document.getElementById('mainContent');
-            const sidebarToggle = document.getElementById('sidebarToggle');
-            const footer = document.querySelector('.footer');
+            loadRecentActivity();
+            loadUserProfile();
+            loadAnalysisLimits();
 
-            if (uploadForm && uploadArea && imageInput && preview && analyzeBtn && plantType) {
-                // Load user profile
-                loadUserProfile();
+            // Sidebar functionality
+            function initializeSidebar() {
+                const sidebar = document.getElementById('sidebar');
+                const mainContent = document.getElementById('mainContent');
+                const sidebarToggle = document.getElementById('sidebarToggle');
 
-                // Load initial stats
-                loadAnalysisStats();
-                loadAnalysisHistory();
-
-                // Handle drag and drop
-                uploadArea.addEventListener('dragover', (e) => {
-                    e.preventDefault();
-                    uploadArea.classList.add('dragover');
+                sidebarToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('expanded');
+                    mainContent.classList.toggle('expanded');
                 });
 
-                uploadArea.addEventListener('dragleave', () => {
-                    uploadArea.classList.remove('dragover');
-                });
-
-                uploadArea.addEventListener('drop', (e) => {
-                    e.preventDefault();
-                    uploadArea.classList.remove('dragover');
-                    const file = e.dataTransfer.files[0];
-                    if (file && file.type.startsWith('image/')) {
-                        handleImageFile(file);
-                    }
-                });
-
-                uploadArea.addEventListener('click', () => {
-                    imageInput.click();
-                });
-
-                imageInput.addEventListener('change', (e) => {
-                    const file = e.target.files[0];
-                    if (file) {
-                        handleImageFile(file);
-                    }
-                });
-
-                function handleImageFile(file) {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        preview.src = e.target.result;
-                        analyzeBtn.disabled = false;
-                    };
-                    reader.readAsDataURL(file);
-                }
-
-                uploadForm.addEventListener('submit', async function(e) {
-                    e.preventDefault();
-                    const file = imageInput.files[0];
-                    if (!file) return;
-
-                    const formData = new FormData();
-                    formData.append('image', file);
-                    formData.append('plantType', plantType.value);
-
-                    loading.style.display = 'block';
-                    document.getElementById('resultContainer').style.display = 'none';
-                    analyzeBtn.disabled = true;
-                    errorMessage.style.display = 'none';
-
-                    try {
-                        const response = await fetch('/api/analyze', {
-                            method: 'POST',
-                            body: formData
-                        });
-
-                        const result = await response.json();
-                        
-                        if (result.status === 'success') {
-                            displayResult(result);
-                            loadAnalysisStats();
-                            loadAnalysisHistory();
-                        } else {
-                            errorMessage.textContent = result.message;
-                            errorMessage.style.display = 'block';
+                // Close sidebar when clicking outside on mobile
+                document.addEventListener('click', function(event) {
+                    if (window.innerWidth <= 768) {
+                        if (!sidebar.contains(event.target) && !sidebarToggle.contains(event.target)) {
+                            sidebar.classList.remove('expanded');
+                            mainContent.classList.remove('expanded');
                         }
-                    } catch (error) {
-                        errorMessage.textContent = 'Error analyzing image: ' + error.message;
-                        errorMessage.style.display = 'block';
-                    } finally {
-                        loading.style.display = 'none';
-                        analyzeBtn.disabled = false;
                     }
                 });
 
-                function displayResult(result) {
-                    const prediction = result.prediction;
-                    // Get the highest confidence value
-                    const confidence = (Math.max(...result.confidence_scores[0]) * 100).toFixed(2);
-                    const isHealthy = prediction.includes('healthy');
-                    const description = result.description || '';
-                    const resultContent = document.querySelector('.result-content');
-                    resultContent.innerHTML = `
-                        <div class="card shadow-lg p-4 mb-4 bg-white rounded text-center" style="max-width: 500px; margin: 0 auto;">
-                            <img id="resultImage" class="result-image mb-3 mx-auto d-block" src="/uploads/${result.imagePath}" alt="Analyzed Plant" style="max-width: 300px; border-radius: 15px; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
-                            <h4 class="mb-2">${isHealthy ? '<span class=\'badge bg-success\'>Healthy Plant</span>' : `<span class=\'badge bg-danger\'>Disease Detected</span>`}</h4>
-                            <h5 class="mb-3">${prediction.replace('Tomato___', '').replace('Apple___', '').replace('Corn_(maize)___', '').replace('Grape___', '').replace('Peach___', '')}</h5>
-                            <div class="mb-3">
-                                <label class="form-label">Confidence:</label>
-                                <div class="progress" style="height: 24px;">
-                                    <div class="progress-bar ${isHealthy ? 'bg-success' : 'bg-danger'}" role="progressbar" style="width: ${confidence}%" aria-valuenow="${confidence}" aria-valuemin="0" aria-valuemax="100">${confidence}%</div>
-                                </div>
-                            </div>
-                            ${description ? `<div class='alert alert-info mt-3'>${description}</div>` : ''}
-                            <button class="btn btn-outline-primary mt-3" onclick="window.location.reload()">Analyze Another</button>
-                        </div>
-                    `;
-                    document.getElementById('resultContainer').style.display = 'block';
-                }
+                // Handle sidebar navigation
+                document.querySelectorAll('.sidebar-item').forEach(item => {
+                    item.addEventListener('click', function(e) {
+                        const href = this.getAttribute('href');
+                        if (href.startsWith('#')) {
+                            e.preventDefault();
+                            const target = document.querySelector(href);
+                            if (target) {
+                                target.scrollIntoView({ behavior: 'smooth' });
+                            }
+                        }
+                        
+                        // Update active state
+                        document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+                        this.classList.add('active');
+                    });
+                });
             }
 
+            // Load analysis statistics
             async function loadAnalysisStats() {
                 try {
-                    const response = await fetch('/api/analysis/stats', {
-                        credentials: 'include'  // Ensure cookies/session are sent
+                    const response = await fetch('/analysis/api/stats', {
+                        credentials: 'include'
                     });
-                    if (!response.ok) {
-                        if (response.status === 401 || response.status === 403) {
-                            document.getElementById('totalAnalyses').textContent = '-';
-                            document.getElementById('healthyPlants').textContent = '-';
-                            document.getElementById('diseasedPlants').textContent = '-';
-                            return;
-                        }
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    const stats = await response.json();
-                    document.getElementById('totalAnalyses').textContent = stats.totalAnalyses || 0;
-                    document.getElementById('healthyPlants').textContent = stats.healthyPlants || 0;
-                    document.getElementById('diseasedPlants').textContent = stats.diseasedPlants || 0;
-                } catch (error) {
-                    document.getElementById('totalAnalyses').textContent = '-';
-                    document.getElementById('healthyPlants').textContent = '-';
-                    document.getElementById('diseasedPlants').textContent = '-';
-                    console.error('Error loading stats:', error);
-                }
-            }
-
-            async function loadAnalysisHistory() {
-                try {
-                    const response = await fetch('/api/analysis/history');
-                    const history = await response.json();
-                    const historyList = document.getElementById('analysisHistory');
-                    const moreHistoryMessage = document.getElementById('moreHistoryMessage');
-                    const historyErrorMessage = document.getElementById('historyErrorMessage');
                     
-                    if (!Array.isArray(history) || history.length === 0) {
-                        historyList.innerHTML = '<div class="text-center text-muted">No analysis history found.</div>';
-                        moreHistoryMessage.style.display = 'none';
-                        historyErrorMessage.style.display = 'none';
+                    if (!response.ok) {
+                        console.warn('Stats API returned error:', response.status);
+                        updateStatsDisplay(0, 0, 0);
                         return;
                     }
                     
-                    historyList.innerHTML = history.map(item => `
-                        <div class="col-md-6 col-lg-4 mb-3">
-                            <div class="card h-100 shadow-sm border-0">
-                                <div class="card-body">
-                                    <div class="d-flex align-items-center mb-2">
-                                        <img src="/uploads/${item.imagePath}" alt="Plant" style="width: 48px; height: 48px; object-fit: cover; border-radius: 8px; margin-right: 12px;">
-                                        <div>
-                                            <span class="badge ${item.prediction.includes('healthy') ? 'bg-success' : 'bg-danger'}">${item.prediction.includes('healthy') ? 'Healthy' : 'Diseased'}</span>
-                                            <div class="fw-bold">${item.plantType.charAt(0).toUpperCase() + item.plantType.slice(1)}</div>
-                                        </div>
-                                    </div>
-                                    <div class="mb-1"><strong>Prediction:</strong> ${item.prediction.replace('Tomato___', '').replace('Apple___', '').replace('Corn_(maize)___', '').replace('Grape___', '').replace('Peach___', '')}</div>
-                                    <div class="mb-1"><strong>Confidence:</strong> ${(item.confidence * 100).toFixed(2)}%</div>
-                                    <div class="text-muted" style="font-size: 0.9em;">${new Date(item.analysisDate).toLocaleString()}</div>
+                    const stats = await response.json();
+                    
+                    // Check if response contains error
+                    if (stats.error) {
+                        console.warn('Stats API error:', stats.error);
+                        updateStatsDisplay(0, 0, 0);
+                        return;
+                    }
+                    
+                    updateStatsDisplay(
+                        stats.totalAnalyses || 0,
+                        stats.healthyPlants || 0,
+                        stats.diseasedPlants || 0
+                    );
+                    
+                    // Update analysis limits
+                    updateAnalysisLimits(stats);
+                    
+                    // Animate counters
+                    animateCounters();
+                } catch (error) {
+                    console.error('Error loading stats:', error);
+                    updateStatsDisplay(0, 0, 0);
+                }
+            }
+
+            function updateAnalysisLimits(stats) {
+                const limitCard = document.getElementById('limitCard');
+                const limitIcon = document.getElementById('limitIcon');
+                const limitTitle = document.getElementById('limitTitle');
+                const limitDescription = document.getElementById('limitDescription');
+                const progressFill = document.getElementById('progressFill');
+                const progressText = document.getElementById('progressText');
+                const subscriptionStatus = document.getElementById('subscriptionStatus');
+                const analyzeBtn = document.getElementById('analyzeBtn');
+                const upgradeBtn = document.getElementById('upgradeBtn');
+
+                const hasSubscription = stats.hasActiveSubscription || false;
+                const used = stats.freeAnalysesUsed || 0;
+                const limit = stats.freeAnalysesLimit || 10;
+                const remaining = stats.remainingFreeAnalyses || 0;
+                const canAnalyze = stats.canPerformAnalysis || false;
+
+                // Reset classes
+                limitCard.className = 'limit-card';
+                progressFill.className = 'progress-fill';
+
+                if (hasSubscription) {
+                    // User has active subscription
+                    limitCard.classList.add('subscription-active');
+                    limitIcon.innerHTML = '<i class="fas fa-crown"></i>';
+                    limitTitle.textContent = 'Premium Subscription Active';
+                    limitDescription.textContent = 'Unlimited analyses available';
+                    progressFill.style.width = '100%';
+                    progressFill.classList.add('success');
+                    progressText.innerHTML = '<span>Unlimited</span>';
+                    subscriptionStatus.innerHTML = '<span class="badge bg-success">Premium</span>';
+                    analyzeBtn.style.display = 'inline-flex';
+                    upgradeBtn.style.display = 'none';
+                } else if (canAnalyze) {
+                    // User has remaining free analyses
+                    limitIcon.innerHTML = '<i class="fas fa-chart-line"></i>';
+                    limitTitle.textContent = 'Free Analyses Remaining';
+                    limitDescription.textContent = `You have ${remaining} free analyses left`;
+                    
+                    const percentage = (used / limit) * 100;
+                    progressFill.style.width = percentage + '%';
+                    
+                    if (percentage >= 80) {
+                        progressFill.classList.add('danger');
+                    }
+                    
+                    progressText.innerHTML = `<span>${used} / ${limit} used</span>`;
+                    subscriptionStatus.innerHTML = '<span class="badge bg-primary">Free Plan</span>';
+                    analyzeBtn.style.display = 'inline-flex';
+                    upgradeBtn.style.display = 'inline-flex';
+                } else {
+                    // User has exceeded free limit
+                    limitCard.classList.add('limit-exceeded');
+                    limitIcon.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+                    limitTitle.textContent = 'Free Limit Exceeded';
+                    limitDescription.textContent = 'Subscribe to continue analyzing plants';
+                    progressFill.style.width = '100%';
+                    progressFill.classList.add('danger');
+                    progressText.innerHTML = `<span>${used} / ${limit} used</span>`;
+                    subscriptionStatus.innerHTML = '<span class="badge bg-danger">Limit Exceeded</span>';
+                    analyzeBtn.style.display = 'none';
+                    upgradeBtn.style.display = 'inline-flex';
+                    upgradeBtn.textContent = 'Subscribe Now';
+                    upgradeBtn.innerHTML = '<i class="fas fa-crown me-2"></i>Subscribe Now';
+                }
+            }
+
+            function updateStatsDisplay(total, healthy, diseased) {
+                document.getElementById('totalAnalyses').textContent = total;
+                document.getElementById('healthyPlants').textContent = healthy;
+                document.getElementById('diseasedPlants').textContent = diseased;
+            }
+
+            function animateCounters() {
+                const counters = document.querySelectorAll('.stat-value');
+                counters.forEach(counter => {
+                    const target = parseInt(counter.textContent);
+                    if (isNaN(target)) return;
+                    
+                    let current = 0;
+                    const increment = target / 30;
+                    const timer = setInterval(() => {
+                        current += increment;
+                        if (current >= target) {
+                            counter.textContent = target;
+                            clearInterval(timer);
+                        } else {
+                            counter.textContent = Math.floor(current);
+                        }
+                    }, 50);
+                });
+            }
+
+            // Load recent activity
+            async function loadRecentActivity() {
+                try {
+                    const response = await fetch('/analysis/api/history');
+                    const history = await response.json();
+                    const container = document.getElementById('analysisHistory');
+                    
+                    if (!Array.isArray(history) || history.length === 0) {
+                        container.innerHTML = `
+                            <div class="text-center text-muted py-4">
+                                <i class="fas fa-leaf fa-3x mb-3 opacity-50"></i>
+                                <p>No recent activity found. Start by analyzing your first plant!</p>
+                                <a href="/analysis/page" class="action-btn">Analyze Now</a>
+                            </div>
+                        `;
+                        return;
+                    }
+                    
+                    container.innerHTML = history.slice(0, 5).map(item => `
+                        <div class="activity-item">
+                            <div class="activity-icon ${item.disease && item.disease.toLowerCase().includes('healthy') ? 'healthy' : 'diseased'}">
+                                <i class="fas ${item.disease && item.disease.toLowerCase().includes('healthy') ? 'fa-leaf' : 'fa-bug'}"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">
+                                    ${item.plantName || 'Plant'} Analysis
+                                </div>
+                                <div class="activity-meta">
+                                    ${item.disease || 'Unknown'} • ${(item.confidence * 100).toFixed(1)}% confidence • ${new Date(item.analysisDate).toLocaleDateString()}
                                 </div>
                             </div>
                         </div>
                     `).join('');
                     
-                    // Show the "more history" message if we have exactly 6 items
-                    moreHistoryMessage.style.display = history.length === 6 ? 'block' : 'none';
-                    historyErrorMessage.style.display = 'none';
+                    if (history.length >= 5) {
+                        container.innerHTML += `
+                            <div class="text-center mt-3">
+                                <a href="/analysis/history" class="action-btn">View All History</a>
+                            </div>
+                        `;
+                    }
                 } catch (error) {
-                    const historyList = document.getElementById('analysisHistory');
-                    const historyErrorMessage = document.getElementById('historyErrorMessage');
-                    historyList.innerHTML = '<div class="text-danger">Error loading history.</div>';
-                    historyErrorMessage.textContent = 'Error loading history: ' + error.message;
-                    historyErrorMessage.style.display = 'block';
+                    console.error('Error loading recent activity:', error);
+                    document.getElementById('analysisHistory').innerHTML = `
+                        <div class="text-center text-danger py-4">
+                            <i class="fas fa-exclamation-triangle fa-2x mb-3"></i>
+                            <p>Error loading recent activity</p>
+                        </div>
+                    `;
                 }
             }
 
+            // Load user profile
             async function loadUserProfile() {
                 try {
                     const response = await fetch('/api/user/profile');
@@ -864,203 +1182,78 @@
                         return;
                     }
 
-                    // Update user information
-                    document.getElementById('userName').textContent = profile.name || 'Guest User';
-                    const joinDate = new Date(profile.joinDate);
-                    document.getElementById('userJoinDate').textContent = 
-                        `Member since ${joinDate.toLocaleDateString()}`;
+                    // Update dropdown if elements exist
+                    const dropdownUserName = document.getElementById('dropdownUserName');
+                    const dropdownUserEmail = document.getElementById('dropdownUserEmail');
+                    
+                    if (dropdownUserName) {
+                        dropdownUserName.textContent = profile.name || 'Guest';
+                    }
+                    if (dropdownUserEmail) {
+                        dropdownUserEmail.textContent = profile.email || 'Not logged in';
+                    }
 
-                    // Update stats
-                    // if (profile.stats) {
-                    //     document.getElementById('totalAnalyses').textContent = profile.stats.totalAnalyses || 0;
-                    //     document.getElementById('healthyPlants').textContent = profile.stats.healthyPlants || 0;
-                    //     document.getElementById('diseasedPlants').textContent = profile.stats.diseasedPlants || 0;
-                    // }
+                    // Update navbar stats
+                    if (profile.stats) {
+                        const totalAnalysesCount = document.getElementById('totalAnalysesCount');
+                        if (totalAnalysesCount) {
+                            totalAnalysesCount.textContent = profile.stats.totalAnalyses || 0;
+                        }
+                    }
                 } catch (error) {
                     console.error('Error loading user profile:', error);
-                    document.getElementById('userName').textContent = 'Guest User';
-                    document.getElementById('userJoinDate').textContent = 'Not logged in';
                 }
             }
 
-            sidebarToggle.addEventListener('click', function() {
-                sidebar.classList.toggle('expanded');
-                mainContent.classList.toggle('expanded');
-            });
-
-            // Close sidebar when clicking outside on mobile
-            document.addEventListener('click', function(event) {
-                if (window.innerWidth <= 768) {
-                    if (!sidebar.contains(event.target) && !sidebarToggle.contains(event.target)) {
-                        sidebar.classList.remove('expanded');
-                        mainContent.classList.remove('expanded');
+            // Load analysis limits for navbar
+            async function loadAnalysisLimits() {
+                try {
+                    const response = await fetch('/analysis/api/limits');
+                    const data = await response.json();
+                    
+                    if (data.status === 'success') {
+                        const remainingAnalysesCount = document.getElementById('remainingAnalysesCount');
+                        if (remainingAnalysesCount) {
+                            remainingAnalysesCount.textContent = data.remainingAnalyses;
+                        }
                     }
+                } catch (error) {
+                    console.error('Error loading analysis limits:', error);
                 }
-            });
+            }
 
-            // Handle sidebar item clicks
-            document.querySelectorAll('.sidebar-item').forEach(item => {
-                item.addEventListener('click', function(e) {
-                    const text = this.textContent.trim();
-                    if (text === 'History') {
-                        window.location.href = '/api/analysis/page/history';
-                    } else if (text === 'Features') {
-                        e.preventDefault();
-                        document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
-                    } else if (text === 'About') {
-                        e.preventDefault();
-                        document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' });
-                    } else if (text === 'Upgrade') {
-                        window.location.href = '/subscription';
-                    }
-                });
-            });
-
-            // Add active class to current section
-            const sections = document.querySelectorAll('section[id]');
-            const sidebarItems = document.querySelectorAll('.sidebar-item');
-
-            function setActiveSection() {
-                const scrollPosition = window.scrollY;
-
-                sections.forEach(section => {
-                    const sectionTop = section.offsetTop - 100;
-                    const sectionHeight = section.offsetHeight;
-                    const sectionId = section.getAttribute('id');
-
-                    if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
-                        sidebarItems.forEach(item => {
-                            item.classList.remove('active');
-                            if (item.getAttribute('href') === `#${sectionId}`) {
-                                item.classList.add('active');
-                            }
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
                         });
                     }
                 });
-            }
-
-            window.addEventListener('scroll', setActiveSection);
-            setActiveSection(); // Set initial active section
-
-            // --- USER PROFILE DROPDOWN & MODAL LOGIC ---
-            async function loadUserDropdown() {
-                try {
-                    const response = await fetch('/api/user/profile');
-                    const profile = await response.json();
-                    if (profile.status === 'error') return;
-                    document.getElementById('dropdownUserName').textContent = profile.name || 'No Name';
-                    document.getElementById('dropdownUserEmail').textContent = profile.email || 'No Email';
-                } catch (e) {
-                    document.getElementById('dropdownUserName').textContent = 'Error';
-                    document.getElementById('dropdownUserEmail').textContent = 'Error';
-                }
-            }
-            loadUserDropdown();
-
-            // Open modal and populate fields
-            document.getElementById('editProfileDropdownBtn').addEventListener('click', async function(e) {
-                e.preventDefault();
-                const modal = new bootstrap.Modal(document.getElementById('editProfileModal'));
-                // Load user data
-                try {
-                    const response = await fetch('/api/user/profile');
-                    const profile = await response.json();
-                    // Fill fields
-                    document.getElementById('profileName').value = profile.name || '';
-                    document.getElementById('profileEmail').value = profile.email || '';
-                    document.getElementById('profilePhone').value = profile.phoneNumber || '';
-                    document.getElementById('profileAddress').value = profile.address || '';
-                    document.getElementById('profileCity').value = profile.city || '';
-                    document.getElementById('profileState').value = profile.state || '';
-                    document.getElementById('profilePostalCode').value = profile.postalCode || '';
-                    document.getElementById('profileCountry').value = profile.country || '';
-                    document.getElementById('profilePicture').value = profile.profilePicture || '';
-                    // Highlight missing fields, remove highlight from filled fields
-                    [
-                        {id: 'profilePhone', val: profile.phoneNumber},
-                        {id: 'profileAddress', val: profile.address},
-                        {id: 'profileCity', val: profile.city},
-                        {id: 'profileState', val: profile.state},
-                        {id: 'profilePostalCode', val: profile.postalCode},
-                        {id: 'profileCountry', val: profile.country},
-                        {id: 'profilePicture', val: profile.profilePicture}
-                    ].forEach(f => {
-                        const input = document.getElementById(f.id);
-                        if (!f.val) {
-                            input.classList.add('border-danger', 'bg-light');
-                        } else {
-                            input.classList.remove('border-danger', 'bg-light');
-                        }
-                    });
-                    document.getElementById('profileSuccessMsg').classList.add('d-none');
-                    modal.show();
-                } catch (e) {
-                    alert('Error loading profile');
-                }
             });
 
-            // Handle profile update
-            document.getElementById('profileEditForm').addEventListener('submit', async function(e) {
-                e.preventDefault();
-                const data = {
-                    name: document.getElementById('profileName').value,
-                    email: document.getElementById('profileEmail').value,
-                    phoneNumber: document.getElementById('profilePhone').value,
-                    address: document.getElementById('profileAddress').value,
-                    city: document.getElementById('profileCity').value,
-                    state: document.getElementById('profileState').value,
-                    postalCode: document.getElementById('profilePostalCode').value,
-                    country: document.getElementById('profileCountry').value,
-                    profilePicture: document.getElementById('profilePicture').value
-                };
-                try {
-                    const response = await fetch('/api/user/profile', {
-                        method: 'PUT',
-                        headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify(data)
-                    });
-                    if (response.ok) {
-                        document.getElementById('profileSuccessMsg').classList.remove('d-none');
-                        loadUserDropdown();
-                        loadUserProfile();
-                    } else {
-                        alert('Failed to update profile');
+            // Add scroll-based animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
                     }
-                } catch (e) {
-                    alert('Error updating profile');
-                }
-            });
+                });
+            }, observerOptions);
 
-            // Fix: Remove leftover modal-backdrop and reset body state when Edit Profile modal is closed
-            const editProfileModal = document.getElementById('editProfileModal');
-            editProfileModal.addEventListener('hidden.bs.modal', function () {
-                // Properly close dropdown
-                const userDropdownBtn = document.getElementById('userDropdown');
-                if (userDropdownBtn) {
-                    const dropdownInstance = bootstrap.Dropdown.getOrCreateInstance(userDropdownBtn);
-                    dropdownInstance.hide();
-                }
-                // Remove any lingering modal-backdrop
-                document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
-                // Reset body class and style
-                document.body.classList.remove('modal-open');
-                document.body.style.overflow = '';
-                document.body.style.paddingRight = '';
+            document.querySelectorAll('.animate-fadein').forEach(el => {
+                observer.observe(el);
             });
-
-            // Responsive footer shift with sidebar
-            function updateFooterShift() {
-                if (sidebar.classList.contains('expanded') && window.innerWidth > 991) {
-                    footer.classList.add('shifted');
-                } else {
-                    footer.classList.remove('shifted');
-                }
-            }
-            document.getElementById('sidebarToggle').addEventListener('click', function() {
-                setTimeout(updateFooterShift, 310); // after sidebar transition
-            });
-            window.addEventListener('resize', updateFooterShift);
-            updateFooterShift();
         });
     </script>
 </body>

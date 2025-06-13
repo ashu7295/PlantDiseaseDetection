@@ -16,6 +16,6 @@ public class ScheduledTasks {
     // Run every hour
     @Scheduled(fixedRate = 3600000)
     public void cleanupExpiredOTPs() {
-        otpService.deleteExpiredOTPs();
+        otpService.cleanupExpiredOTPs();
     }
 } 

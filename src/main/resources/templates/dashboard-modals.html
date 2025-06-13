@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <!-- User Profile Modal -->
+    <div th:fragment="modals">
+        <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content" style="border: none; border-radius: 16px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);">
+                    <div class="modal-header" style="background: linear-gradient(135deg, #198754 0%, #20c997 100%); color: white; border-radius: 16px 16px 0 0; border: none; padding: 24px 32px;">
+                        <div class="d-flex align-items-center">
+                            <div class="profile-icon-wrapper me-3" style="width: 48px; height: 48px; background: rgba(255,255,255,0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-user" style="font-size: 1.5rem; color: white;"></i>
+                            </div>
+                            <div>
+                                <h5 class="modal-title mb-0" id="profileModalLabel" style="font-weight: 600; font-size: 1.25rem;">Profile Overview</h5>
+                                <small style="opacity: 0.9;">Manage your account information</small>
+                            </div>
+                        </div>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" style="padding: 32px;">
+                        <!-- Profile Header -->
+                        <div class="profile-header text-center mb-4" style="padding: 24px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 12px;">
+                            <div class="profile-avatar-xl mx-auto mb-3" style="width: 96px; height: 96px; border-radius: 50%; background: linear-gradient(135deg, #198754 0%, #20c997 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 2.5rem; font-weight: 600; box-shadow: 0 8px 24px rgba(25, 135, 84, 0.3);">
+                                <span id="profileModalInitials">G</span>
+                            </div>
+                            <h4 class="mb-1" style="color: #212529; font-weight: 600;" id="profileModalName">Guest User</h4>
+                            <p class="text-muted mb-2" id="profileModalEmail">Not logged in</p>
+                            <div class="d-flex justify-content-center align-items-center">
+                                <span class="badge bg-success-subtle text-success px-3 py-2" style="font-size: 0.8rem; border-radius: 20px;" id="profileModalStatus">
+                                    <i class="fas fa-circle me-1" style="font-size: 0.6rem;"></i>
+                                    <span>Active Member</span>
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Profile Stats -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-4">
+                                <div class="stat-card text-center" style="background: #f8f9fa; border-radius: 12px; padding: 20px; border: 1px solid #e9ecef;">
+                                    <div class="stat-icon mb-2" style="width: 40px; height: 40px; background: #e3f2fd; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                                        <i class="fas fa-microscope" style="color: #1976d2; font-size: 1.1rem;"></i>
+                                    </div>
+                                    <div class="stat-value" style="font-size: 1.5rem; font-weight: 700; color: #1976d2;" id="profileTotalAnalyses">0</div>
+                                    <div class="stat-label" style="color: #6c757d; font-size: 0.85rem;">Total Analyses</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="stat-card text-center" style="background: #f8f9fa; border-radius: 12px; padding: 20px; border: 1px solid #e9ecef;">
+                                    <div class="stat-icon mb-2" style="width: 40px; height: 40px; background: #e8f5e9; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                                        <i class="fas fa-leaf" style="color: #198754; font-size: 1.1rem;"></i>
+                                    </div>
+                                    <div class="stat-value" style="font-size: 1.5rem; font-weight: 700; color: #198754;" id="profileHealthyPlants">0</div>
+                                    <div class="stat-label" style="color: #6c757d; font-size: 0.85rem;">Healthy Plants</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="stat-card text-center" style="background: #f8f9fa; border-radius: 12px; padding: 20px; border: 1px solid #e9ecef;">
+                                    <div class="stat-icon mb-2" style="width: 40px; height: 40px; background: #fff3cd; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                                        <i class="fas fa-chart-line" style="color: #856404; font-size: 1.1rem;"></i>
+                                    </div>
+                                    <div class="stat-value" style="font-size: 1.5rem; font-weight: 700; color: #856404;" id="profileAccuracyRate">0%</div>
+                                    <div class="stat-label" style="color: #6c757d; font-size: 0.85rem;">Accuracy Rate</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Profile Information -->
+                        <div class="profile-info">
+                            <h6 class="mb-3" style="color: #495057; font-weight: 600; font-size: 1rem;">Personal Information</h6>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="info-item" style="background: #f8f9fa; border-radius: 8px; padding: 16px; border-left: 4px solid #198754;">
+                                        <div class="info-label" style="font-size: 0.8rem; color: #6c757d; font-weight: 500; margin-bottom: 4px;">Phone Number</div>
+                                        <div class="info-value" style="font-size: 0.95rem; color: #212529; font-weight: 500;" id="profilePhoneDisplay">Not provided</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-item" style="background: #f8f9fa; border-radius: 8px; padding: 16px; border-left: 4px solid #198754;">
+                                        <div class="info-label" style="font-size: 0.8rem; color: #6c757d; font-weight: 500; margin-bottom: 4px;">User Type</div>
+                                        <div class="info-value" style="font-size: 0.95rem; color: #212529; font-weight: 500;" id="profileUserTypeDisplay">Standard</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-item" style="background: #f8f9fa; border-radius: 8px; padding: 16px; border-left: 4px solid #198754;">
+                                        <div class="info-label" style="font-size: 0.8rem; color: #6c757d; font-weight: 500; margin-bottom: 4px;">City</div>
+                                        <div class="info-value" style="font-size: 0.95rem; color: #212529; font-weight: 500;" id="profileCityDisplay">Not provided</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-item" style="background: #f8f9fa; border-radius: 8px; padding: 16px; border-left: 4px solid #198754;">
+                                        <div class="info-label" style="font-size: 0.8rem; color: #6c757d; font-weight: 500; margin-bottom: 4px;">State</div>
+                                        <div class="info-value" style="font-size: 0.95rem; color: #212529; font-weight: 500;" id="profileStateDisplay">Not provided</div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="info-item" style="background: #f8f9fa; border-radius: 8px; padding: 16px; border-left: 4px solid #198754;">
+                                        <div class="info-label" style="font-size: 0.8rem; color: #6c757d; font-weight: 500; margin-bottom: 4px;">Address</div>
+                                        <div class="info-value" style="font-size: 0.95rem; color: #212529; font-weight: 500;" id="profileAddressDisplay">Not provided</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="border: none; padding: 24px 32px; background: #f8f9fa; border-radius: 0 0 16px 16px;">
+                        <button type="button" class="btn btn-outline-secondary me-2" data-bs-dismiss="modal" style="border-radius: 8px; padding: 10px 20px; font-weight: 500;">
+                            Close
+                        </button>
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#editProfileModal" style="background: linear-gradient(135deg, #198754 0%, #20c997 100%); border: none; border-radius: 8px; padding: 10px 24px; font-weight: 500;">
+                            <i class="fas fa-edit me-2"></i>Edit Profile
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Profile Edit Modal -->
+        <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content" style="border: none; border-radius: 16px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);">
+                    <div class="modal-header" style="background: linear-gradient(135deg, #198754 0%, #20c997 100%); color: white; border-radius: 16px 16px 0 0; border: none; padding: 24px 32px;">
+                        <div class="d-flex align-items-center">
+                            <div class="profile-icon-wrapper me-3" style="width: 48px; height: 48px; background: rgba(255,255,255,0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-user-edit" style="font-size: 1.5rem; color: white;"></i>
+                            </div>
+                            <div>
+                                <h5 class="modal-title mb-0" id="editProfileModalLabel" style="font-weight: 600; font-size: 1.25rem;">Edit Profile</h5>
+                                <small style="opacity: 0.9;">Update your personal information</small>
+                            </div>
+                        </div>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" style="padding: 32px;">
+                        <form id="profileEditForm" novalidate>
+                            <!-- Success Message -->
+                            <div id="profileSuccessMsg" class="alert alert-success d-none mb-4" role="alert" style="border-radius: 12px; border: none; background: #d1e7dd; color: #0a3622;">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-check-circle me-2" style="color: #198754;"></i>
+                                    <span>Profile updated successfully!</span>
+                                </div>
+                            </div>
+
+                            <!-- Error Message -->
+                            <div id="profileErrorMsg" class="alert alert-danger d-none mb-4" role="alert" style="border-radius: 12px; border: none; background: #f8d7da; color: #721c24;">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-exclamation-circle me-2" style="color: #dc3545;"></i>
+                                    <span id="profileErrorText">An error occurred while updating your profile.</span>
+                                </div>
+                            </div>
+
+                            <div class="row g-4">
+                                <!-- Personal Information Section -->
+                                <div class="col-12">
+                                    <h6 class="section-title mb-3" style="color: #495057; font-weight: 600; font-size: 1rem; border-bottom: 2px solid #e9ecef; padding-bottom: 8px;">
+                                        <i class="fas fa-user me-2" style="color: #198754;"></i>Personal Information
+                                    </h6>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="profileName" class="form-label" style="font-weight: 600; color: #495057; margin-bottom: 8px;">
+                                        Full Name <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control" id="profileName" name="name" required 
+                                           style="border-radius: 8px; padding: 12px 16px; border: 2px solid #e9ecef; font-size: 0.95rem;"
+                                           placeholder="Enter your full name">
+                                    <div class="invalid-feedback" style="font-size: 0.85rem;">
+                                        Please provide a valid name.
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="profileEmail" class="form-label" style="font-weight: 600; color: #495057; margin-bottom: 8px;">
+                                        Email Address <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="email" class="form-control" id="profileEmail" name="email" required readonly 
+                                           style="border-radius: 8px; padding: 12px 16px; border: 2px solid #e9ecef; background: #f8f9fa; font-size: 0.95rem;"
+                                           placeholder="your.email@example.com">
+                                    <small class="form-text text-muted" style="font-size: 0.8rem;">Email cannot be changed for security reasons</small>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="profilePhone" class="form-label" style="font-weight: 600; color: #495057; margin-bottom: 8px;">
+                                        Phone Number
+                                    </label>
+                                    <input type="tel" class="form-control" id="profilePhone" name="phoneNumber" 
+                                           style="border-radius: 8px; padding: 12px 16px; border: 2px solid #e9ecef; font-size: 0.95rem;"
+                                           placeholder="+1 (555) 123-4567"
+                                           pattern="[+]?[0-9\s\-\(\)]+">
+                                    <div class="invalid-feedback" style="font-size: 0.85rem;">
+                                        Please provide a valid phone number.
+                                    </div>
+                                </div>
+
+                                <!-- Location Information Section -->
+                                <div class="col-12 mt-4">
+                                    <h6 class="section-title mb-3" style="color: #495057; font-weight: 600; font-size: 1rem; border-bottom: 2px solid #e9ecef; padding-bottom: 8px;">
+                                        <i class="fas fa-map-marker-alt me-2" style="color: #198754;"></i>Location Information
+                                    </h6>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="profileCity" class="form-label" style="font-weight: 600; color: #495057; margin-bottom: 8px;">
+                                        City
+                                    </label>
+                                    <input type="text" class="form-control" id="profileCity" name="city" 
+                                           style="border-radius: 8px; padding: 12px 16px; border: 2px solid #e9ecef; font-size: 0.95rem;"
+                                           placeholder="Enter your city">
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="profileState" class="form-label" style="font-weight: 600; color: #495057; margin-bottom: 8px;">
+                                        State/Province
+                                    </label>
+                                    <input type="text" class="form-control" id="profileState" name="state" 
+                                           style="border-radius: 8px; padding: 12px 16px; border: 2px solid #e9ecef; font-size: 0.95rem;"
+                                           placeholder="Enter your state">
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="profilePostalCode" class="form-label" style="font-weight: 600; color: #495057; margin-bottom: 8px;">
+                                        Postal Code
+                                    </label>
+                                    <input type="text" class="form-control" id="profilePostalCode" name="postalCode" 
+                                           style="border-radius: 8px; padding: 12px 16px; border: 2px solid #e9ecef; font-size: 0.95rem;"
+                                           placeholder="12345">
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="profileCountry" class="form-label" style="font-weight: 600; color: #495057; margin-bottom: 8px;">
+                                        Country
+                                    </label>
+                                    <input type="text" class="form-control" id="profileCountry" name="country" 
+                                           style="border-radius: 8px; padding: 12px 16px; border: 2px solid #e9ecef; font-size: 0.95rem;"
+                                           placeholder="Enter your country">
+                                </div>
+                                
+                                <div class="col-12">
+                                    <label for="profileAddress" class="form-label" style="font-weight: 600; color: #495057; margin-bottom: 8px;">
+                                        Street Address
+                                    </label>
+                                    <textarea class="form-control" id="profileAddress" name="address" rows="2"
+                                              style="border-radius: 8px; padding: 12px 16px; border: 2px solid #e9ecef; font-size: 0.95rem; resize: vertical;"
+                                              placeholder="Enter your complete address"></textarea>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer" style="border: none; padding: 24px 32px; background: #f8f9fa; border-radius: 0 0 16px 16px;">
+                        <button type="button" class="btn btn-outline-secondary me-2" data-bs-dismiss="modal" style="border-radius: 8px; padding: 10px 20px; font-weight: 500;">
+                            <i class="fas fa-times me-2"></i>Cancel
+                        </button>
+                        <button type="submit" form="profileEditForm" class="btn btn-primary" id="saveProfileBtn" style="background: linear-gradient(135deg, #198754 0%, #20c997 100%); border: none; border-radius: 8px; padding: 10px 24px; font-weight: 500;">
+                            <i class="fas fa-save me-2"></i>Save Changes
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .form-control:focus {
+            border-color: #198754 !important;
+            box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25) !important;
+        }
+        
+        .form-control.is-invalid {
+            border-color: #dc3545 !important;
+        }
+        
+        .form-control.is-valid {
+            border-color: #198754 !important;
+        }
+        
+        .profile-avatar-xl {
+            transition: all 0.3s ease;
+        }
+        
+        .profile-avatar-xl:hover {
+            transform: scale(1.05);
+        }
+        
+        .stat-card {
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .info-item {
+            transition: all 0.2s ease;
+        }
+        
+        .info-item:hover {
+            background: #e9ecef !important;
+        }
+        
+        .modal-content {
+            animation: modalSlideIn 0.3s ease-out;
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .section-title {
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background: #198754;
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Profile modal functionality
+            const editProfileBtn = document.querySelector('[data-bs-target="#editProfileModal"]');
+            const profileEditForm = document.getElementById('profileEditForm');
+            const saveProfileBtn = document.getElementById('saveProfileBtn');
+
+            // Load profile data when any profile modal is opened
+            const profileModalBtn = document.querySelector('[data-bs-target="#profileModal"]');
+            if (profileModalBtn) {
+                profileModalBtn.addEventListener('click', async function(e) {
+                    e.preventDefault();
+                    await loadProfileData(true); // Load for view modal
+                });
+            }
+
+            if (editProfileBtn) {
+                editProfileBtn.addEventListener('click', async function(e) {
+                    e.preventDefault();
+                    await loadProfileData(false); // Load for edit modal
+                });
+            }
+
+            // Load profile data function
+            async function loadProfileData(isViewModal = false) {
+                try {
+                    console.log('Loading profile data for modal, isViewModal:', isViewModal);
+                    
+                    const response = await fetch('/api/user/profile', {
+                        method: 'GET',
+                        credentials: 'include',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    console.log('Profile modal response status:', response.status);
+                    
+                    if (response.ok) {
+                        const profile = await response.json();
+                        console.log('Profile modal data received:', profile);
+                        
+                        if (profile.status !== 'error') {
+                            // Update profile view modal
+                            updateProfileViewModal(profile);
+                            
+                            // Fill form fields only if it's for edit modal
+                            if (!isViewModal) {
+                                console.log('Filling edit form with profile data');
+                                document.getElementById('profileName').value = profile.name || '';
+                                document.getElementById('profileEmail').value = profile.email || '';
+                                document.getElementById('profilePhone').value = profile.phoneNumber || '';
+                                document.getElementById('profileAddress').value = profile.address || '';
+                                document.getElementById('profileCity').value = profile.city || '';
+                                document.getElementById('profileState').value = profile.state || '';
+                                document.getElementById('profilePostalCode').value = profile.postalCode || '';
+                                document.getElementById('profileCountry').value = profile.country || '';
+                                
+                                // Hide messages
+                                hideMessages();
+                                
+                                // Clear validation states
+                                clearValidationStates();
+                            }
+                        } else {
+                            console.error('Profile modal API error:', profile.message);
+                            showError('Failed to load profile data: ' + profile.message);
+                        }
+                    } else {
+                        console.error('Profile modal API failed with status:', response.status);
+                        if (!isViewModal) {
+                            showError('Failed to load profile data. Please try again.');
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error loading profile:', error);
+                    if (!isViewModal) {
+                        showError('Failed to load profile data. Please try again.');
+                    }
+                }
+            }
+
+            function updateProfileViewModal(profile) {
+                // Update basic info
+                const profileModalName = document.getElementById('profileModalName');
+                const profileModalEmail = document.getElementById('profileModalEmail');
+                const profileModalInitials = document.getElementById('profileModalInitials');
+                
+                if (profileModalName) profileModalName.textContent = profile.name || 'Guest User';
+                if (profileModalEmail) profileModalEmail.textContent = profile.email || 'Not logged in';
+                if (profileModalInitials) {
+                    const initials = (profile.name || 'G').substring(0, 1).toUpperCase();
+                    profileModalInitials.textContent = initials;
+                }
+
+                // Update status
+                const profileModalStatus = document.getElementById('profileModalStatus');
+                if (profileModalStatus) {
+                    const hasSubscription = profile.hasActiveSubscription || false;
+                    if (hasSubscription) {
+                        profileModalStatus.className = 'badge bg-warning-subtle text-warning px-3 py-2';
+                        profileModalStatus.innerHTML = '<i class="fas fa-circle me-1" style="font-size: 0.6rem;"></i><span>Premium Member</span>';
+                    } else {
+                        profileModalStatus.className = 'badge bg-success-subtle text-success px-3 py-2';
+                        profileModalStatus.innerHTML = '<i class="fas fa-circle me-1" style="font-size: 0.6rem;"></i><span>Active Member</span>';
+                    }
+                }
+
+                // Update stats
+                if (profile.stats) {
+                    const profileTotalAnalyses = document.getElementById('profileTotalAnalyses');
+                    const profileHealthyPlants = document.getElementById('profileHealthyPlants');
+                    const profileAccuracyRate = document.getElementById('profileAccuracyRate');
+                    
+                    if (profileTotalAnalyses) profileTotalAnalyses.textContent = profile.stats.totalAnalyses || 0;
+                    if (profileHealthyPlants) profileHealthyPlants.textContent = profile.stats.healthyPlants || 0;
+                    
+                    // Calculate accuracy rate
+                    if (profileAccuracyRate) {
+                        const total = profile.stats.totalAnalyses || 0;
+                        const healthy = profile.stats.healthyPlants || 0;
+                        const diseased = profile.stats.diseasedPlants || 0;
+                        
+                        if (total > 0) {
+                            const accuracy = Math.round(((healthy + diseased) / total) * 100);
+                            profileAccuracyRate.textContent = accuracy + '%';
+                        } else {
+                            profileAccuracyRate.textContent = '0%';
+                        }
+                    }
+                }
+
+                // Update profile info displays
+                const profilePhoneDisplay = document.getElementById('profilePhoneDisplay');
+                const profileUserTypeDisplay = document.getElementById('profileUserTypeDisplay');
+                const profileCityDisplay = document.getElementById('profileCityDisplay');
+                const profileStateDisplay = document.getElementById('profileStateDisplay');
+                const profileAddressDisplay = document.getElementById('profileAddressDisplay');
+
+                if (profilePhoneDisplay) profilePhoneDisplay.textContent = profile.phoneNumber || 'Not provided';
+                if (profileUserTypeDisplay) profileUserTypeDisplay.textContent = profile.userType || 'Standard';
+                if (profileCityDisplay) profileCityDisplay.textContent = profile.city || 'Not provided';
+                if (profileStateDisplay) profileStateDisplay.textContent = profile.state || 'Not provided';
+                if (profileAddressDisplay) profileAddressDisplay.textContent = profile.address || 'Not provided';
+            }
+
+            // Form validation
+            function validateForm() {
+                let isValid = true;
+                const form = document.getElementById('profileEditForm');
+                
+                // Clear previous validation states
+                clearValidationStates();
+                
+                // Validate required fields
+                const nameField = document.getElementById('profileName');
+                if (!nameField.value.trim()) {
+                    nameField.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    nameField.classList.add('is-valid');
+                }
+                
+                // Validate phone number if provided
+                const phoneField = document.getElementById('profilePhone');
+                if (phoneField.value.trim() && !isValidPhone(phoneField.value)) {
+                    phoneField.classList.add('is-invalid');
+                    isValid = false;
+                } else if (phoneField.value.trim()) {
+                    phoneField.classList.add('is-valid');
+                }
+                
+                return isValid;
+            }
+            
+            function isValidPhone(phone) {
+                const phoneRegex = /^[+]?[\d\s\-\(\)]+$/;
+                return phoneRegex.test(phone) && phone.replace(/\D/g, '').length >= 10;
+            }
+            
+            function clearValidationStates() {
+                const inputs = document.querySelectorAll('#profileEditForm .form-control');
+                inputs.forEach(input => {
+                    input.classList.remove('is-valid', 'is-invalid');
+                });
+            }
+            
+            function showError(message) {
+                const errorDiv = document.getElementById('profileErrorMsg');
+                const errorText = document.getElementById('profileErrorText');
+                errorText.textContent = message;
+                errorDiv.classList.remove('d-none');
+                document.getElementById('profileSuccessMsg').classList.add('d-none');
+            }
+            
+            function showSuccess(message) {
+                const successDiv = document.getElementById('profileSuccessMsg');
+                successDiv.querySelector('span').textContent = message;
+                successDiv.classList.remove('d-none');
+                document.getElementById('profileErrorMsg').classList.add('d-none');
+            }
+            
+            function hideMessages() {
+                document.getElementById('profileSuccessMsg').classList.add('d-none');
+                document.getElementById('profileErrorMsg').classList.add('d-none');
+            }
+
+            // Handle profile form submission
+            if (profileEditForm) {
+                profileEditForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    if (!validateForm()) {
+                        showError('Please correct the highlighted fields.');
+                        return;
+                    }
+                    
+                    // Show loading state
+                    saveProfileBtn.disabled = true;
+                    saveProfileBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Saving...';
+                    
+                    const formData = {
+                        name: document.getElementById('profileName').value.trim(),
+                        phoneNumber: document.getElementById('profilePhone').value.trim(),
+                        address: document.getElementById('profileAddress').value.trim(),
+                        city: document.getElementById('profileCity').value.trim(),
+                        state: document.getElementById('profileState').value.trim(),
+                        postalCode: document.getElementById('profilePostalCode').value.trim(),
+                        country: document.getElementById('profileCountry').value.trim()
+                    };
+                    
+                    try {
+                        const response = await fetch('/api/user/profile', {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify(formData)
+                        });
+                        
+                        const result = await response.json();
+                        
+                        if (response.ok && result.status === 'success') {
+                            showSuccess('Profile updated successfully!');
+                            
+                            // Update UI elements immediately
+                            updateUIElements(formData);
+                            
+                            // Refresh navbar data
+                            if (window.refreshNavbarUserData) {
+                                await window.refreshNavbarUserData();
+                            }
+                            
+                            // Refresh profile view modal data
+                            await loadProfileData(true);
+                            
+                            // Auto-close modal after 2 seconds
+                            setTimeout(() => {
+                                const modal = bootstrap.Modal.getInstance(document.getElementById('editProfileModal'));
+                                if (modal) {
+                                    modal.hide();
+                                }
+                            }, 2000);
+                        } else {
+                            const errorMessage = result.message || 'Failed to update profile';
+                            showError(errorMessage);
+                            console.error('Profile update failed:', result);
+                        }
+                    } catch (error) {
+                        console.error('Error updating profile:', error);
+                        showError('Network error. Please check your connection and try again.');
+                    } finally {
+                        // Reset button state
+                        saveProfileBtn.disabled = false;
+                        saveProfileBtn.innerHTML = '<i class="fas fa-save me-2"></i>Save Changes';
+                    }
+                });
+            }
+            
+            function updateUIElements(formData) {
+                // Update dropdown
+                const dropdownUserName = document.getElementById('dropdownUserName');
+                if (dropdownUserName) {
+                    dropdownUserName.textContent = formData.name;
+                }
+                
+                // Update navbar display
+                const userNameDisplay = document.getElementById('userNameDisplay');
+                if (userNameDisplay) {
+                    userNameDisplay.textContent = formData.name;
+                }
+                
+                // Update initials
+                const initials = formData.name.substring(0, 1).toUpperCase();
+                const userInitials = document.getElementById('userInitials');
+                const dropdownUserInitials = document.getElementById('dropdownUserInitials');
+                const profileModalInitials = document.getElementById('profileModalInitials');
+                
+                if (userInitials) userInitials.textContent = initials;
+                if (dropdownUserInitials) dropdownUserInitials.textContent = initials;
+                if (profileModalInitials) profileModalInitials.textContent = initials;
+
+                // Update profile modal name
+                const profileName = document.getElementById('profileModalName');
+                if (profileName) {
+                    profileName.textContent = formData.name || 'Guest User';
+                }
+
+                // Update profile modal phone display
+                const profilePhoneDisplay = document.getElementById('profilePhoneDisplay');
+                if (profilePhoneDisplay) {
+                    profilePhoneDisplay.textContent = formData.phoneNumber || 'Not provided';
+                }
+
+                // Update profile modal city display
+                const profileCityDisplay = document.getElementById('profileCityDisplay');
+                if (profileCityDisplay) {
+                    profileCityDisplay.textContent = formData.city || 'Not provided';
+                }
+
+                // Update profile modal state display
+                const profileStateDisplay = document.getElementById('profileStateDisplay');
+                if (profileStateDisplay) {
+                    profileStateDisplay.textContent = formData.state || 'Not provided';
+                }
+
+                // Update profile modal address display
+                const profileAddressDisplay = document.getElementById('profileAddressDisplay');
+                if (profileAddressDisplay) {
+                    profileAddressDisplay.textContent = formData.address || 'Not provided';
+                }
+            }
+
+            // Real-time validation
+            const inputs = document.querySelectorAll('#profileEditForm .form-control');
+            inputs.forEach(input => {
+                input.addEventListener('blur', function() {
+                    if (this.hasAttribute('required') && !this.value.trim()) {
+                        this.classList.add('is-invalid');
+                        this.classList.remove('is-valid');
+                    } else if (this.value.trim()) {
+                        if (this.type === 'tel' && !isValidPhone(this.value)) {
+                            this.classList.add('is-invalid');
+                            this.classList.remove('is-valid');
+                        } else {
+                            this.classList.add('is-valid');
+                            this.classList.remove('is-invalid');
+                        }
+                    } else {
+                        this.classList.remove('is-valid', 'is-invalid');
+                    }
+                });
+            });
+
+            // Clean up modal backdrop issues
+            const editProfileModal = document.getElementById('editProfileModal');
+            if (editProfileModal) {
+                editProfileModal.addEventListener('hidden.bs.modal', function () {
+                    // Remove any lingering modal-backdrop
+                    document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+                    // Reset body state
+                    document.body.classList.remove('modal-open');
+                    document.body.style.overflow = '';
+                    document.body.style.paddingRight = '';
+                    
+                    // Clear validation states and messages
+                    clearValidationStates();
+                    hideMessages();
+                });
+            }
+        });
+    </script>
+</body>
+</html> 

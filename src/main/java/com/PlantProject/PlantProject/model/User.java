@@ -84,10 +84,23 @@ public class User implements UserDetails {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    // Analysis limit tracking fields
+    @Column(name = "free_analyses_used", nullable = false)
+    private Integer freeAnalysesUsed = 0;
+
+    @Column(name = "free_analyses_limit", nullable = false)
+    private Integer freeAnalysesLimit = 10;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
+        if (freeAnalysesUsed == null) {
+            freeAnalysesUsed = 0;
+        }
+        if (freeAnalysesLimit == null) {
+            freeAnalysesLimit = 10;
+        }
     }
 
     @PreUpdate
@@ -122,6 +135,6 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return verified;
+        return true; // Allow login even without email verification
     }
 } 

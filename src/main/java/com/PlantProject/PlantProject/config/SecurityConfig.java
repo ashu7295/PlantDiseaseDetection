@@ -2,30 +2,29 @@ package com.PlantProject.PlantProject.config;
 
 import com.PlantProject.PlantProject.model.User;
 import com.PlantProject.PlantProject.repository.UserRepository;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2UserAuthority;
-import org.springframework.security.core.GrantedAuthority;
 import java.util.Collections;
 import java.util.Map;
 import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Log4j2
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -37,7 +36,6 @@ public class SecurityConfig {
     @Autowired
     private OAuth2LoginSuccessHandler oauth2LoginSuccessHandler;
 
-    // For debugging: store the last raw password entered at login
     public static volatile String lastRawPassword = null;
 
     @Bean
@@ -48,11 +46,14 @@ public class SecurityConfig {
                 .requestMatchers("/", "/login", "/signup", "/css/**", "/js/**", "/images/**", "/uploads/**").permitAll()
                 .requestMatchers("/api/users/signup", "/api/users/verify-otp", "/api/users/forgot-password", "/api/users/reset-password").permitAll()
                 .requestMatchers("/analyze", "/analysis/**", "/api/analyze/**").permitAll()
+                .requestMatchers("/api/**", "/analysis/**").authenticated()
+                .requestMatchers("/dashboard", "/subscription").authenticated()
                 .anyRequest().authenticated()
             )
             .oauth2Login(oauth2 -> oauth2
                 .loginPage("/login")
                 .defaultSuccessUrl("/dashboard", true)
+                .successHandler(oauth2LoginSuccessHandler)
             )
             .formLogin(form -> form
                 .loginPage("/login")
@@ -61,7 +62,13 @@ public class SecurityConfig {
             )
             .logout(logout -> logout
                 .logoutSuccessUrl("/login?logout")
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
                 .permitAll()
+            )
+            .sessionManagement(session -> session
+                .maximumSessions(1)
+                .maxSessionsPreventsLogin(false)
             );
         
         return http.build();
@@ -125,6 +132,7 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         return email -> {
+            log.info("email------------------------------------: {}", email);
             logger.info("Attempting to authenticate user with email: {}", email);
             User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> {
@@ -151,4 +159,4 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-} 
+}

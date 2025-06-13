@@ -5,6 +5,7 @@ import com.PlantProject.PlantProject.model.OTPType;
 import com.PlantProject.PlantProject.model.User;
 import com.PlantProject.PlantProject.model.UserRole;
 import com.PlantProject.PlantProject.repository.UserRepository;
+import com.PlantProject.PlantProject.util.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -40,6 +41,7 @@ public class UserService {
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setName(request.getName());
+        user.setVerified(true);
         return userRepository.save(user);
     }
 
@@ -139,12 +141,58 @@ public class UserService {
         if (otpService.validateOTP(email, otp, OTPType.PASSWORD_RESET)) {
             User user = userRepository.findByEmail(email).orElse(null);
             if (user != null) {
+                // Validate new password strength
+                if (!isPasswordStrong(newPassword)) {
+                    throw new RuntimeException("Password must be at least 8 characters with uppercase, lowercase, number, and special character");
+                }
+                
                 user.setPassword(passwordEncoder.encode(newPassword));
                 userRepository.save(user);
+                
+                // Send password change confirmation email
+                try {
+                    emailService.sendPasswordChangeConfirmation(user.getEmail(), SecurityUtils.getClientIpAddress(), SecurityUtils.getBrowserName());
+                    logger.info("Password change confirmation email sent to: {}", user.getEmail());
+                } catch (Exception e) {
+                    logger.warn("Failed to send password change confirmation email to: {}", user.getEmail(), e);
+                    // Don't fail the password reset if email fails
+                }
+                
                 return true;
             }
         }
         return false;
+    }
+
+    /**
+     * Validates password strength according to industry standards
+     */
+    private boolean isPasswordStrong(String password) {
+        if (password == null || password.length() < 8) {
+            return false;
+        }
+        
+        // Check for at least one uppercase letter
+        if (!password.matches(".*[A-Z].*")) {
+            return false;
+        }
+        
+        // Check for at least one lowercase letter
+        if (!password.matches(".*[a-z].*")) {
+            return false;
+        }
+        
+        // Check for at least one digit
+        if (!password.matches(".*\\d.*")) {
+            return false;
+        }
+        
+        // Check for at least one special character
+        if (!password.matches(".*[@$!%*?&].*")) {
+            return false;
+        }
+        
+        return true;
     }
 
     @Transactional

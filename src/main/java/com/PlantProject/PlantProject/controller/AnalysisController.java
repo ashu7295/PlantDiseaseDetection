@@ -16,9 +16,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Collections;
+import java.util.HashMap;
 
 @Controller
 @RequestMapping("/analysis")
@@ -37,7 +41,37 @@ public class AnalysisController {
     }
 
     @GetMapping("/page")
-    public String showAnalyzePage() {
+    public String showAnalyzePage(Model model) {
+        // Same as /analyze for consistency
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
+        User user = userService.findByEmail(email);
+        if (user != null) {
+            model.addAttribute("userId", user.getId());
+            List<AnalysisResult> recentAnalyses = analysisService.getRecentAnalyses(user);
+            if (recentAnalyses.size() > 6) {
+                recentAnalyses = recentAnalyses.subList(0, 6);
+            }
+            model.addAttribute("recentAnalyses", recentAnalyses);
+        }
+        return "analyze";
+    }
+
+    @GetMapping("/analyze")
+    public String showAnalyzePageAlias(Model model) {
+        // Get current user
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
+        User user = userService.findByEmail(email);
+        if (user != null) {
+            model.addAttribute("userId", user.getId());
+            // Get 6 most recent analyses
+            List<AnalysisResult> recentAnalyses = analysisService.getRecentAnalyses(user);
+            if (recentAnalyses.size() > 6) {
+                recentAnalyses = recentAnalyses.subList(0, 6);
+            }
+            model.addAttribute("recentAnalyses", recentAnalyses);
+        }
         return "analyze";
     }
 
@@ -111,6 +145,85 @@ public class AnalysisController {
             logger.error("Error fetching analysis stats", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "Error fetching analysis stats: " + e.getMessage()));
+        }
+    }
+
+    @GetMapping("/history")
+    public String showAnalysisHistoryPage(Model model) {
+        // Get current user
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
+        User user = userService.findByEmail(email);
+        if (user != null) {
+            List<AnalysisResult> analyses = analysisService.getRecentAnalyses(user);
+            model.addAttribute("analyses", analyses);
+        } else {
+            model.addAttribute("analyses", Collections.emptyList());
+        }
+        return "analysis-history";
+    }
+
+    @GetMapping("/api/history")
+    @ResponseBody
+    public ResponseEntity<?> getAnalysisHistory() {
+        try {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String email = auth.getName();
+            User user = userService.findByEmail(email);
+            if (user == null) {
+                return ResponseEntity.badRequest().body(Map.of("error", "User not found"));
+            }
+            List<AnalysisResult> recentAnalyses = analysisService.getRecentAnalyses(user);
+            return ResponseEntity.ok(recentAnalyses);
+        } catch (Exception e) {
+            logger.error("Error fetching analysis history", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Error fetching analysis history: " + e.getMessage()));
+        }
+    }
+
+    @GetMapping("/api/stats")
+    @ResponseBody
+    public ResponseEntity<?> getAnalysisStats() {
+        try {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String email = auth.getName();
+            User user = userService.findByEmail(email);
+            if (user == null) {
+                return ResponseEntity.badRequest().body(Map.of("error", "User not found"));
+            }
+            Map<String, Object> stats = analysisService.getUserAnalysisStats(user);
+            return ResponseEntity.ok(stats);
+        } catch (Exception e) {
+            logger.error("Error fetching analysis stats", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Error fetching analysis stats: " + e.getMessage()));
+        }
+    }
+
+    @GetMapping("/api/limits")
+    @ResponseBody
+    public ResponseEntity<?> getAnalysisLimits() {
+        try {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String email = auth.getName();
+            User user = userService.findByEmail(email);
+            if (user == null) {
+                return ResponseEntity.badRequest().body(Map.of("error", "User not found"));
+            }
+            
+            Map<String, Object> limits = new HashMap<>();
+            limits.put("hasActiveSubscription", analysisService.hasActiveSubscription(user));
+            limits.put("freeAnalysesUsed", user.getFreeAnalysesUsed() != null ? user.getFreeAnalysesUsed() : 0);
+            limits.put("freeAnalysesLimit", user.getFreeAnalysesLimit() != null ? user.getFreeAnalysesLimit() : 10);
+            limits.put("remainingFreeAnalyses", analysisService.getRemainingFreeAnalyses(user));
+            limits.put("canPerformAnalysis", analysisService.canUserPerformAnalysis(user));
+            
+            return ResponseEntity.ok(limits);
+        } catch (Exception e) {
+            logger.error("Error fetching analysis limits", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Error fetching analysis limits: " + e.getMessage()));
         }
     }
 } 

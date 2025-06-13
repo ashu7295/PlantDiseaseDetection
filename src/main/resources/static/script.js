@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 viewMoreDiv.className = 'col-12 text-center mt-2';
                 viewMoreDiv.innerHTML = `
                     <p class="text-muted small mb-2">Showing your 6 most recent analyses</p>
-                    <a href="/api/analysis/page/history" class="btn btn-outline-primary btn-sm">View Full History</a>
+                                            <a href="/analysis/history" class="btn btn-outline-primary btn-sm">View Full History</a>
                 `;
                 recentImages.appendChild(viewMoreDiv);
             })

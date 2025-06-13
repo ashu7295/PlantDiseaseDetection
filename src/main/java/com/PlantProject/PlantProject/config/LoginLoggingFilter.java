@@ -19,7 +19,6 @@ public class LoginLoggingFilter implements Filter {
             String email = req.getParameter("email");
             String password = req.getParameter("password");
             logger.info("LOGIN ATTEMPT: email={}, password={}", email, password);
-            // Store the last raw password for debugging
             SecurityConfig.lastRawPassword = password;
         }
         chain.doFilter(request, response);

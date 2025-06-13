@@ -1,5 +1,6 @@
 package com.PlantProject.PlantProject.controller;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -12,6 +13,7 @@ import com.PlantProject.PlantProject.service.UserService;
 import com.PlantProject.PlantProject.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 
+@Log4j2
 @Controller
 public class HomeController {
 
@@ -29,7 +31,9 @@ public class HomeController {
 
     @GetMapping("/login")
     public String login(Model model, String error) {
+        log.info("login--------------------------------------------------1");
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        log.info("login--------------------------------------------------2");
         if (auth != null && auth.isAuthenticated() && !auth.getName().equals("anonymousUser")) {
             return "redirect:/dashboard";
         }
@@ -37,8 +41,7 @@ public class HomeController {
         if (error != null) {
             model.addAttribute("error", "Invalid email or password");
         }
-        
-        // Add a default user object for the navbar
+
         model.addAttribute("user", new User());
         return "login";
     }

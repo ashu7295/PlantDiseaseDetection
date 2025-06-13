@@ -22,42 +22,174 @@
     </style>
 </head>
 <body>
-    <nav th:fragment="dashboard-navbar" class="navbar navbar-expand-lg" style="background: #f8f9fa !important;">
+    <nav th:fragment="dashboard-navbar" class="navbar navbar-expand-lg navbar-light" style="background: #ffffff; border-bottom: 1px solid #e9ecef; box-shadow: 0 2px 4px rgba(0,0,0,0.04);">
         <div class="container-fluid">
-            <a class="navbar-brand text-success" href="/dashboard">
-                <i class="fas fa-leaf me-2"></i>Plant Disease Detection
+            <a class="navbar-brand d-flex align-items-center" href="/dashboard" style="color: #198754 !important; font-weight: 600; font-size: 1.25rem;">
+                <i class="fas fa-leaf me-2" style="color: #198754;"></i>
+                <span>Plant Disease Detection</span>
             </a>
+            
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
+            
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <div class="d-flex align-items-center">
-                    <div class="dropdown">
-                        <button class="btn btn-link nav-link dropdown-toggle d-flex align-items-center" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-user-circle me-2" style="font-size: 2.2rem;"></i>
-                            <span id="userNameDisplay" th:text="${user != null ? user.name : 'Guest'}">Guest</span>
+                    <!-- Notifications -->
+                    <div class="dropdown me-3">
+                        <button class="btn btn-link nav-link position-relative p-2" type="button" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="color: #6c757d !important; border: none; background: none;">
+                            <i class="fas fa-bell" style="font-size: 1.1rem;"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none" id="notificationBadge" style="font-size: 0.6rem; padding: 2px 5px;">
+                                <span id="notificationCount">0</span>
+                                <span class="visually-hidden">unread messages</span>
+                            </span>
                         </button>
-                        <ul class="dropdown-menu dropdown-menu-end shadow user-dropdown-menu" aria-labelledby="userDropdown" style="min-width: 320px; border-radius: 20px;">
-                            <li class="px-4 py-3">
-                                <div class="fw-bold fs-5 mb-1" id="dropdownUserName" th:text="${user != null ? user.name : 'Guest'}">Guest</div>
-                                <div class="text-muted small" id="dropdownUserEmail" th:text="${user != null ? user.email : 'Not logged in'}">Not logged in</div>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="notificationDropdown" style="min-width: 320px; border: 1px solid #e9ecef; border-radius: 8px; padding: 0;">
+                            <li class="dropdown-header d-flex justify-content-between align-items-center" style="background: #f8f9fa; padding: 12px 16px; border-bottom: 1px solid #e9ecef; font-weight: 600; color: #495057;">
+                                <span>Notifications</span>
+                                <small class="text-muted" id="notificationCountText">0 new</small>
                             </li>
-                            <li><hr class="dropdown-divider my-2"></li>
+                            <div id="notificationsList">
+                                <li class="text-center py-4">
+                                    <i class="fas fa-bell-slash text-muted fa-2x mb-2"></i>
+                                    <p class="text-muted mb-0">No notifications yet</p>
+                                </li>
+                            </div>
+                            <li><hr class="dropdown-divider my-0"></li>
                             <li>
-                                <a class="dropdown-item d-flex align-items-center py-2" href="#" data-bs-toggle="modal" data-bs-target="#profileModal" style="font-size: 1.1rem;">
-                                    <i class="fas fa-user me-3"></i> My Profile
+                                <a class="dropdown-item text-center py-2" href="#" style="color: #198754; font-weight: 500; font-size: 0.9rem;">
+                                    View all notifications
                                 </a>
                             </li>
+                        </ul>
+                    </div>
+
+                    <!-- User Profile Dropdown -->
+                    <div class="dropdown">
+                        <button class="btn btn-link nav-link dropdown-toggle d-flex align-items-center p-2" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="color: #495057 !important; border: none; background: none;">
+                            <div class="profile-avatar me-2" style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #198754 0%, #20c997 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 0.9rem; font-weight: 600;">
+                                <span id="userInitials">G</span>
+                            </div>
+                            <div class="d-none d-md-block text-start">
+                                <div class="fw-semibold" style="font-size: 0.9rem; line-height: 1.2;" id="userNameDisplay">Guest</div>
+                                <div class="text-muted" style="font-size: 0.75rem; line-height: 1.2;" id="userRoleDisplay">Loading...</div>
+                            </div>
+                            <i class="fas fa-chevron-down ms-2" style="font-size: 0.7rem; color: #6c757d;"></i>
+                        </button>
+                        
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm user-dropdown-menu" aria-labelledby="userDropdown" style="min-width: 280px; border: 1px solid #e9ecef; border-radius: 12px; padding: 8px 0; margin-top: 8px;">
+                            <!-- User Info Header -->
+                            <li class="px-3 py-3" style="border-bottom: 1px solid #f8f9fa;">
+                                <div class="d-flex align-items-center">
+                                    <div class="profile-avatar-large me-3" style="width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, #198754 0%, #20c997 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem; font-weight: 600;">
+                                        <span id="dropdownUserInitials">G</span>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="fw-semibold" style="font-size: 1rem; color: #212529;" id="dropdownUserName">Guest</div>
+                                        <div class="text-muted" style="font-size: 0.85rem;" id="dropdownUserEmail">Not logged in</div>
+                                        <div class="d-flex align-items-center mt-1">
+                                            <span class="badge bg-success-subtle text-success" style="font-size: 0.7rem; padding: 2px 8px;" id="userStatusBadge">
+                                                <i class="fas fa-circle" style="font-size: 0.5rem; margin-right: 4px;"></i>
+                                                <span id="userStatusText">Loading...</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+
+                            <!-- Quick Stats -->
+                            <li class="px-3 py-2" style="border-bottom: 1px solid #f8f9fa;">
+                                <div class="row g-2 text-center">
+                                    <div class="col-4">
+                                        <div class="fw-bold text-primary" style="font-size: 1.1rem;" id="totalAnalysesCount">0</div>
+                                        <div class="text-muted" style="font-size: 0.7rem;">Analyses</div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="fw-bold text-success" style="font-size: 1.1rem;" id="remainingAnalysesCount">0</div>
+                                        <div class="text-muted" style="font-size: 0.7rem;">Remaining</div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="fw-bold text-warning" style="font-size: 1.1rem;" id="accuracyRate">0%</div>
+                                        <div class="text-muted" style="font-size: 0.7rem;">Accuracy</div>
+                                    </div>
+                                </div>
+                            </li>
+
+                            <!-- Menu Items -->
                             <li>
-                                <a class="dropdown-item d-flex align-items-center py-2" href="#" id="editProfileDropdownBtn" data-bs-toggle="modal" data-bs-target="#editProfileModal" style="font-size: 1.1rem;">
-                                    <i class="fas fa-user-edit me-3"></i> Edit Profile
+                                <a class="dropdown-item d-flex align-items-center py-2 px-3" href="#" data-bs-toggle="modal" data-bs-target="#profileModal" style="color: #495057; transition: all 0.2s ease;">
+                                    <div class="icon-wrapper me-3" style="width: 32px; height: 32px; border-radius: 8px; background: #f8f9fa; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-user" style="font-size: 0.9rem; color: #6c757d;"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-medium" style="font-size: 0.9rem;">My Profile</div>
+                                        <div class="text-muted" style="font-size: 0.75rem;">View and edit profile</div>
+                                    </div>
                                 </a>
                             </li>
-                            <li><hr class="dropdown-divider my-2"></li>
+                            
                             <li>
-                                <form th:action="@{/logout}" method="post" class="d-inline">
-                                    <button type="submit" class="dropdown-item d-flex align-items-center text-danger py-2" style="font-size: 1.1rem;">
-                                        <i class="fas fa-sign-out-alt me-3"></i> Logout
+                                <a class="dropdown-item d-flex align-items-center py-2 px-3" href="/analysis/history" style="color: #495057; transition: all 0.2s ease;">
+                                    <div class="icon-wrapper me-3" style="width: 32px; height: 32px; border-radius: 8px; background: #f8f9fa; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-history" style="font-size: 0.9rem; color: #6c757d;"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-medium" style="font-size: 0.9rem;">Analysis History</div>
+                                        <div class="text-muted" style="font-size: 0.75rem;">View past analyses</div>
+                                    </div>
+                                </a>
+                            </li>
+                            
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center py-2 px-3" href="/subscription" style="color: #495057; transition: all 0.2s ease;">
+                                    <div class="icon-wrapper me-3" style="width: 32px; height: 32px; border-radius: 8px; background: #fff3cd; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-crown" style="font-size: 0.9rem; color: #856404;"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-medium" style="font-size: 0.9rem;">Upgrade Plan</div>
+                                        <div class="text-muted" style="font-size: 0.75rem;">Get unlimited access</div>
+                                    </div>
+                                </a>
+                            </li>
+
+                            <li><hr class="dropdown-divider my-2"></li>
+                            
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center py-2 px-3" href="#" style="color: #495057; transition: all 0.2s ease;">
+                                    <div class="icon-wrapper me-3" style="width: 32px; height: 32px; border-radius: 8px; background: #f8f9fa; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-cog" style="font-size: 0.9rem; color: #6c757d;"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-medium" style="font-size: 0.9rem;">Settings</div>
+                                        <div class="text-muted" style="font-size: 0.75rem;">Account preferences</div>
+                                    </div>
+                                </a>
+                            </li>
+                            
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center py-2 px-3" href="#" style="color: #495057; transition: all 0.2s ease;">
+                                    <div class="icon-wrapper me-3" style="width: 32px; height: 32px; border-radius: 8px; background: #f8f9fa; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-question-circle" style="font-size: 0.9rem; color: #6c757d;"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-medium" style="font-size: 0.9rem;">Help & Support</div>
+                                        <div class="text-muted" style="font-size: 0.75rem;">Get assistance</div>
+                                    </div>
+                                </a>
+                            </li>
+
+                            <li><hr class="dropdown-divider my-2"></li>
+                            
+                            <li>
+                                <form th:action="@{/logout}" method="post" class="d-inline w-100">
+                                    <button type="submit" class="dropdown-item d-flex align-items-center py-2 px-3 w-100 border-0 bg-transparent" style="color: #dc3545; transition: all 0.2s ease;">
+                                        <div class="icon-wrapper me-3" style="width: 32px; height: 32px; border-radius: 8px; background: #f8d7da; display: flex; align-items: center; justify-content: center;">
+                                            <i class="fas fa-sign-out-alt" style="font-size: 0.9rem; color: #dc3545;"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-medium" style="font-size: 0.9rem;">Sign Out</div>
+                                            <div class="text-muted" style="font-size: 0.75rem;">Logout from account</div>
+                                        </div>
                                     </button>
                                 </form>
                             </li>
@@ -67,32 +199,398 @@
             </div>
         </div>
     </nav>
+    
     <style>
-    .user-dropdown-menu {
-        border-radius: 20px !important;
-        box-shadow: 0 8px 32px rgba(60,60,60,0.18) !important;
-        border: none;
-        margin-top: 12px !important;
-    }
-    .user-dropdown-menu .dropdown-item {
-        border-radius: 10px;
-        transition: background 0.15s;
-    }
-    .user-dropdown-menu .dropdown-item:active, .user-dropdown-menu .dropdown-item:focus {
-        background: #f3f6fa;
-    }
-    .navbar .nav-link,
-    .navbar .navbar-brand,
-    .navbar .dropdown-toggle,
-    .navbar .dropdown-item {
-        color: #212529 !important;
-    }
-    .navbar .dropdown-item:hover,
-    .navbar .dropdown-item:focus {
-        background: #f3f6fa;
-        color: #198754 !important;
-    }
+        .user-dropdown-menu {
+            animation: dropdownFadeIn 0.15s ease-out;
+        }
+        
+        @keyframes dropdownFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .dropdown-item:hover {
+            background-color: #f8f9fa !important;
+            color: #198754 !important;
+        }
+        
+        .dropdown-item:hover .icon-wrapper {
+            background-color: #e8f5e9 !important;
+        }
+        
+        .dropdown-item:hover .icon-wrapper i {
+            color: #198754 !important;
+        }
+        
+        .dropdown-item:hover .text-muted {
+            color: #6c757d !important;
+        }
+        
+        .navbar .dropdown-toggle::after {
+            display: none;
+        }
+        
+        .profile-avatar, .profile-avatar-large {
+            transition: all 0.2s ease;
+        }
+        
+        .profile-avatar:hover, .profile-avatar-large:hover {
+            transform: scale(1.05);
+        }
+        
+        .notification-badge {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
     </style>
     <!-- DASHBOARD NAVBAR DEBUG MARKER -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load user data and stats
+            loadUserData();
+            loadNotifications();
+
+            async function loadUserData() {
+                try {
+                    console.log('Loading user data...');
+                    
+                    // Load user profile with credentials
+                    const profileResponse = await fetch('/api/user/profile', {
+                        method: 'GET',
+                        credentials: 'include',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    console.log('Profile response status:', profileResponse.status);
+                    
+                    if (profileResponse.status === 401) {
+                        console.log('User not authenticated, redirecting to login');
+                        window.location.href = '/login';
+                        return;
+                    }
+                    
+                    if (profileResponse.ok) {
+                        const profile = await profileResponse.json();
+                        console.log('Profile data received:', profile);
+                        
+                        if (profile.status !== 'error') {
+                            updateUserDisplay(profile);
+                        } else {
+                            console.error('Profile API error:', profile.message);
+                            // Set default values for guest user
+                            updateUserDisplay({
+                                name: 'Guest User',
+                                email: 'Not logged in',
+                                hasActiveSubscription: false
+                            });
+                        }
+                    } else {
+                        console.error('Profile API failed with status:', profileResponse.status);
+                        updateUserDisplay({
+                            name: 'Guest User',
+                            email: 'Not logged in',
+                            hasActiveSubscription: false
+                        });
+                    }
+
+                    // Load analysis limits
+                    const limitsResponse = await fetch('/analysis/api/limits', {
+                        method: 'GET',
+                        credentials: 'include',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    console.log('Limits response status:', limitsResponse.status);
+                    
+                    if (limitsResponse.ok) {
+                        const limits = await limitsResponse.json();
+                        console.log('Limits data received:', limits);
+                        
+                        if (!limits.error) {
+                            updateAnalysisStats(limits);
+                        } else {
+                            console.error('Limits API error:', limits.error);
+                            updateAnalysisStats({
+                                freeAnalysesUsed: 0,
+                                freeAnalysesLimit: 10,
+                                remainingFreeAnalyses: 10,
+                                hasActiveSubscription: false
+                            });
+                        }
+                    } else {
+                        console.error('Limits API failed with status:', limitsResponse.status);
+                        updateAnalysisStats({
+                            freeAnalysesUsed: 0,
+                            freeAnalysesLimit: 10,
+                            remainingFreeAnalyses: 10,
+                            hasActiveSubscription: false
+                        });
+                    }
+
+                    // Load analysis stats for accuracy
+                    const statsResponse = await fetch('/analysis/api/stats', {
+                        method: 'GET',
+                        credentials: 'include',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    console.log('Stats response status:', statsResponse.status);
+                    
+                    if (statsResponse.ok) {
+                        const stats = await statsResponse.json();
+                        console.log('Stats data received:', stats);
+                        
+                        if (!stats.error) {
+                            updateAccuracyRate(stats);
+                        } else {
+                            console.error('Stats API error:', stats.error);
+                            updateAccuracyRate({ totalAnalyses: 0 });
+                        }
+                    } else {
+                        console.error('Stats API failed with status:', statsResponse.status);
+                        updateAccuracyRate({ totalAnalyses: 0 });
+                    }
+
+                } catch (error) {
+                    console.error('Error loading user data:', error);
+                    // Set default values for guest user
+                    updateUserDisplay({
+                        name: 'Guest User',
+                        email: 'Not logged in',
+                        hasActiveSubscription: false
+                    });
+                    updateAnalysisStats({
+                        freeAnalysesUsed: 0,
+                        freeAnalysesLimit: 10,
+                        remainingFreeAnalyses: 10,
+                        hasActiveSubscription: false
+                    });
+                    updateAccuracyRate({ totalAnalyses: 0 });
+                }
+            }
+
+            function updateUserDisplay(profile) {
+                const name = profile.name || 'Guest User';
+                const email = profile.email || 'Not logged in';
+                const initials = name.substring(0, 1).toUpperCase();
+
+                console.log('Updating user display with:', { name, email, initials });
+
+                // Update all name displays
+                const userNameDisplay = document.getElementById('userNameDisplay');
+                const dropdownUserName = document.getElementById('dropdownUserName');
+                const dropdownUserEmail = document.getElementById('dropdownUserEmail');
+                const userInitials = document.getElementById('userInitials');
+                const dropdownUserInitials = document.getElementById('dropdownUserInitials');
+
+                if (userNameDisplay) {
+                    userNameDisplay.textContent = name;
+                    console.log('Updated userNameDisplay to:', name);
+                }
+                if (dropdownUserName) {
+                    dropdownUserName.textContent = name;
+                    console.log('Updated dropdownUserName to:', name);
+                }
+                if (dropdownUserEmail) {
+                    dropdownUserEmail.textContent = email;
+                    console.log('Updated dropdownUserEmail to:', email);
+                }
+                if (userInitials) {
+                    userInitials.textContent = initials;
+                    console.log('Updated userInitials to:', initials);
+                }
+                if (dropdownUserInitials) {
+                    dropdownUserInitials.textContent = initials;
+                    console.log('Updated dropdownUserInitials to:', initials);
+                }
+
+                // Update role/status
+                const hasSubscription = profile.hasActiveSubscription || false;
+                const roleDisplay = document.getElementById('userRoleDisplay');
+                const statusBadge = document.getElementById('userStatusBadge');
+                const statusText = document.getElementById('userStatusText');
+
+                if (roleDisplay) {
+                    if (hasSubscription) {
+                        roleDisplay.textContent = 'Premium Member';
+                    } else {
+                        roleDisplay.textContent = 'Free Member';
+                    }
+                    console.log('Updated roleDisplay to:', roleDisplay.textContent);
+                }
+
+                if (statusBadge && statusText) {
+                    if (hasSubscription) {
+                        statusBadge.className = 'badge bg-warning-subtle text-warning';
+                        statusText.textContent = 'Premium';
+                    } else {
+                        statusBadge.className = 'badge bg-success-subtle text-success';
+                        statusText.textContent = 'Active';
+                    }
+                    console.log('Updated status to:', statusText.textContent);
+                }
+            }
+
+            function updateAnalysisStats(limits) {
+                const totalAnalysesCount = document.getElementById('totalAnalysesCount');
+                const remainingAnalysesCount = document.getElementById('remainingAnalysesCount');
+
+                console.log('Updating analysis stats with:', limits);
+
+                if (totalAnalysesCount) {
+                    totalAnalysesCount.textContent = limits.freeAnalysesUsed || 0;
+                    console.log('Updated totalAnalysesCount to:', limits.freeAnalysesUsed || 0);
+                }
+                
+                if (remainingAnalysesCount) {
+                    if (limits.hasActiveSubscription) {
+                        remainingAnalysesCount.textContent = '∞';
+                    } else {
+                        remainingAnalysesCount.textContent = limits.remainingFreeAnalyses || 0;
+                    }
+                    console.log('Updated remainingAnalysesCount to:', remainingAnalysesCount.textContent);
+                }
+            }
+
+            function updateAccuracyRate(stats) {
+                const accuracyRate = document.getElementById('accuracyRate');
+                if (accuracyRate) {
+                    if (stats.totalAnalyses > 0) {
+                        // Calculate accuracy based on successful analyses
+                        const accuracy = Math.round((stats.totalAnalyses / (stats.totalAnalyses + (stats.failedAnalyses || 0))) * 100);
+                        accuracyRate.textContent = accuracy + '%';
+                    } else {
+                        accuracyRate.textContent = '0%';
+                    }
+                    console.log('Updated accuracyRate to:', accuracyRate.textContent);
+                }
+            }
+
+            async function loadNotifications() {
+                try {
+                    const response = await fetch('/api/notifications', {
+                        method: 'GET',
+                        credentials: 'include',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        const notifications = await response.json();
+                        
+                        if (Array.isArray(notifications) && notifications.length > 0) {
+                            updateNotificationsDisplay(notifications);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error loading notifications:', error);
+                    // Keep default empty state
+                }
+            }
+
+            function updateNotificationsDisplay(notifications) {
+                const unreadCount = notifications.filter(n => !n.read).length;
+                const notificationBadge = document.getElementById('notificationBadge');
+                const notificationCount = document.getElementById('notificationCount');
+                const notificationCountText = document.getElementById('notificationCountText');
+                const notificationsList = document.getElementById('notificationsList');
+
+                // Update badge
+                if (unreadCount > 0) {
+                    notificationBadge.classList.remove('d-none');
+                    notificationCount.textContent = unreadCount;
+                    notificationCountText.textContent = unreadCount + ' new';
+                } else {
+                    notificationBadge.classList.add('d-none');
+                    notificationCountText.textContent = '0 new';
+                }
+
+                // Update notifications list
+                if (notifications.length > 0) {
+                    notificationsList.innerHTML = notifications.slice(0, 3).map(notification => `
+                        <li>
+                            <a class="dropdown-item d-flex align-items-start py-3 px-3" href="#" style="border-bottom: 1px solid #f8f9fa;">
+                                <div class="flex-shrink-0 me-3">
+                                    <div class="bg-${getNotificationColor(notification.type)} rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                                        <i class="fas fa-${getNotificationIcon(notification.type)} text-white" style="font-size: 0.8rem;"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="fw-semibold" style="font-size: 0.9rem; color: #212529;">${notification.title}</div>
+                                    <div class="text-muted" style="font-size: 0.8rem;">${notification.message}</div>
+                                    <small class="text-muted">${formatNotificationTime(notification.createdAt)}</small>
+                                </div>
+                            </a>
+                        </li>
+                    `).join('');
+                }
+            }
+
+            function getNotificationColor(type) {
+                switch(type) {
+                    case 'success': return 'success';
+                    case 'warning': return 'warning';
+                    case 'error': return 'danger';
+                    case 'info': return 'info';
+                    default: return 'primary';
+                }
+            }
+
+            function getNotificationIcon(type) {
+                switch(type) {
+                    case 'success': return 'check';
+                    case 'warning': return 'exclamation-triangle';
+                    case 'error': return 'times';
+                    case 'info': return 'info';
+                    case 'analysis': return 'microscope';
+                    case 'subscription': return 'crown';
+                    default: return 'bell';
+                }
+            }
+
+            function formatNotificationTime(timestamp) {
+                const now = new Date();
+                const time = new Date(timestamp);
+                const diffInMinutes = Math.floor((now - time) / (1000 * 60));
+                
+                if (diffInMinutes < 1) return 'Just now';
+                if (diffInMinutes < 60) return diffInMinutes + ' minutes ago';
+                if (diffInMinutes < 1440) return Math.floor(diffInMinutes / 60) + ' hours ago';
+                return Math.floor(diffInMinutes / 1440) + ' days ago';
+            }
+
+            // Make loadUserData available globally so it can be called after profile updates
+            window.refreshNavbarUserData = loadUserData;
+        });
+    </script>
 </body>
 </html> 
