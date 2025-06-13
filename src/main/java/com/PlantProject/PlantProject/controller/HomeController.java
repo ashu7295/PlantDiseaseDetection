@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import com.PlantProject.PlantProject.dto.SignupRequest;
 import com.PlantProject.PlantProject.service.UserService;
+import com.PlantProject.PlantProject.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Controller
@@ -36,6 +37,9 @@ public class HomeController {
         if (error != null) {
             model.addAttribute("error", "Invalid email or password");
         }
+        
+        // Add a default user object for the navbar
+        model.addAttribute("user", new User());
         return "login";
     }
 
@@ -62,8 +66,14 @@ public class HomeController {
     }
 
     @GetMapping("/dashboard")
-    public String dashboard() {
-        return "index";
+    public String dashboard(Authentication authentication, Model model) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            String email = authentication.getName();
+            User user = userService.findByEmail(email);
+            model.addAttribute("user", user);
+            return "dashboard";
+        }
+        return "redirect:/login";
     }
 
     @GetMapping("/subscription")

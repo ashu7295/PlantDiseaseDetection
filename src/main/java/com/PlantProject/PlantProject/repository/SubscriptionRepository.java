@@ -1,6 +1,6 @@
-package com.PlantProject.repository;
+package com.PlantProject.PlantProject.repository;
 
-import com.PlantProject.model.Subscription;
+import com.PlantProject.PlantProject.model.Subscription;
 import com.PlantProject.PlantProject.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

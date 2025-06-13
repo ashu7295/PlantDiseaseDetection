@@ -8,13 +8,8 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         body {
-            background: #f8f9fa;
+            background: linear-gradient(135deg, #43cea2 0%, #185a9d 100%);
             min-height: 100vh;
-        }
-        .navbar {
-            background: white;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            padding: 1rem 0;
         }
         .navbar-brand {
             color: #4CAF50 !important;
@@ -28,8 +23,10 @@
         .nav-link:hover {
             color: #4CAF50 !important;
         }
-        .main-container {
-            padding: 40px 0;
+        .main-container, .about-section, .features-section, .user-profile, .history-section {
+            background: rgba(255,255,255,0.92);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(44, 62, 80, 0.10);
         }
         .upload-container {
             background: white;
@@ -154,18 +151,22 @@
             padding: 30px;
             border-radius: 15px;
             transition: all 0.3s ease;
+            background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+            color: #6b46c1;
+            border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(44, 62, 80, 0.06);
         }
         .feature-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 12px 40px rgba(44, 62, 80, 0.08);
         }
         .feature-icon {
             font-size: 2.5rem;
-            color: #4CAF50;
+            color: #9f7aea;
             margin-bottom: 20px;
         }
         .about-section {
-            background: white;
+            background: linear-gradient(135deg, #f8ffae 0%, #43cea2 100%);
             padding: 60px 0;
             margin: 40px 0;
             border-radius: 20px;
@@ -212,18 +213,33 @@
             border-bottom: none;
         }
         .footer {
-            background: white;
+            background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
             padding: 40px 0;
             margin-top: 60px;
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 -2px 10px rgba(44, 62, 80, 0.04);
+            transition: margin-left 0.3s ease, width 0.3s ease;
+        }
+        .footer.shifted {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+        }
+        @media (max-width: 991.98px) {
+            .footer.shifted {
+                margin-left: 0;
+                width: 100%;
+            }
         }
         .footer-link {
-            color: #2c3e50;
+            color: #6b7c93;
             text-decoration: none;
             margin: 0 15px;
+            transition: color 0.3s ease;
         }
         .footer-link:hover {
-            color: #4CAF50;
+            color: #4a90e2;
+        }
+        .footer-copyright {
+            color: #8b9db3;
         }
         .upload-area {
             border: 2px dashed #ccc;
@@ -290,20 +306,23 @@
             margin-top: 20px;
         }
         .stat-card {
-            background-color: white;
-            border-radius: 8px;
+            background: linear-gradient(135deg, #f0f7ff 0%, #e6f3ff 100%);
+            border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(44, 62, 80, 0.06);
             padding: 15px;
             text-align: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .stat-value {
             font-size: 1.5rem;
             font-weight: bold;
-            color: #0d6efd;
+            color: #4a90e2;
         }
         .stat-label {
-            color: #6c757d;
+            color: #6b7c93;
             font-size: 0.9rem;
+        }
+        .stat-icon {
+            filter: drop-shadow(0 2px 8px rgba(67, 206, 162, 0.15));
         }
         .sidebar {
             position: fixed;
@@ -311,7 +330,7 @@
             top: 0;
             height: 100vh;
             width: 60px;
-            background: linear-gradient(180deg, #4CAF50 0%, #45a049 100%);
+            background: linear-gradient(180deg, #43cea2 0%, #185a9d 100%);
             box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
             transition: width 0.3s ease;
             z-index: 1000;
@@ -380,6 +399,22 @@
             font-size: 1.5rem;
             color: white;
         }
+        .animate-fadein { opacity: 0; animation: fadeInUp 0.8s forwards; }
+        .animate-fadein[style*="animation-delay: 0.2s"] { animation-delay: 0.2s; }
+        .animate-fadein[style*="animation-delay: 0.4s"] { animation-delay: 0.4s; }
+        .animate-fadein[style*="animation-delay: 0.6s"] { animation-delay: 0.6s; }
+        .animate-fadein[style*="animation-delay: 0.8s"] { animation-delay: 0.8s; }
+        .animate-fadein[style*="animation-delay: 1s"] { animation-delay: 1s; }
+        .animate-fadein[style*="animation-delay: 1.2s"] { animation-delay: 1.2s; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: none; } }
+        .animate-hover { transition: transform 0.2s, box-shadow 0.2s; }
+        .animate-hover:hover { transform: translateY(-8px) scale(1.03); box-shadow: 0 8px 32px rgba(60,60,60,0.15); }
+        .feature-icon { font-size: 2.5rem; color: #43cea2; }
+        .recent-carousel::-webkit-scrollbar { height: 8px; background: #f8f9fa; }
+        .recent-carousel::-webkit-scrollbar-thumb { background: #43cea2; border-radius: 4px; }
+        .hero-section {
+            background: linear-gradient(135deg, #43cea2 0%, #185a9d 100%) !important;
+        }
     </style>
 </head>
 <body>
@@ -407,95 +442,75 @@
     </div>
 
     <div class="main-content" id="mainContent">
-        <div th:replace="~{navbar :: navbar}"></div>
+        <div th:replace="~{dashboard-navbar :: dashboard-navbar}"></div>
+
+        <!-- UPLOAD SECTION (dedicated, prominent) -->
+        <!-- Upload section removed as per user request -->
 
         <div class="main-container">
             <div class="container">
-                <!-- Upload Section -->
-                <div class="upload-container">
-                    <div class="upload-header">
-                        <h1>Plant Disease Detection</h1>
-                        <p>Upload an image of your plant to detect diseases</p>
+                <!-- HERO SECTION -->
+                <section class="hero-section text-white d-flex align-items-center justify-content-center" style="background: linear-gradient(135deg, #43cea2 0%, #185a9d 100%); min-height: 320px; border-radius: 0 0 40px 40px; box-shadow: 0 8px 32px rgba(60,60,60,0.10); margin-bottom: 40px;">
+                    <div class="container text-center">
+                        <h1 class="display-4 fw-bold mb-3 animate-fadein">Welcome, <span th:text="${user != null ? user.name : 'Guest'}">User</span>!</h1>
+                        <p class="lead mb-4 animate-fadein" style="animation-delay: 0.2s;">Empowering you to detect plant diseases early and keep your crops healthy.</p>
+                        <a href="/analyze" class="btn btn-lg btn-success shadow animate-fadein" style="animation-delay: 0.4s;">Analyze a Plant Now</a>
                     </div>
-                    
-                    <form id="uploadForm" enctype="multipart/form-data">
-                        <div class="upload-area" id="uploadArea">
-                            <i class="fas fa-cloud-upload-alt fa-3x mb-3"></i>
-                            <p>Drag and drop an image here or click to select</p>
-                        </div>
-                        <img id="preview" class="preview-image" style="display:none;">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="plantType" class="form-label">Select Plant Type</label>
-                                    <select class="form-control" id="plantType" name="plantType" required>
-                                        <option value="">Choose a plant type...</option>
-                                        <option value="apple">Apple</option>
-                                        <option value="corn">Corn</option>
-                                        <option value="grape">Grape</option>
-                                        <option value="peach">Peach</option>
-                                        <option value="tomato">Tomato</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="image" class="form-label">Upload Image</label>
-                                    <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
-                                </div>
+                </section>
+
+                <!-- STATS CARDS -->
+                <div class="container mb-4 animate-fadein" style="animation-delay: 0.6s;">
+                    <div class="row g-4 justify-content-center">
+                        <div class="col-6 col-md-4">
+                            <div class="card stat-card shadow h-100 text-center p-4 animate-hover" style="border-radius: 18px;">
+                                <div class="stat-icon mb-2"><i class="fas fa-chart-bar fa-2x text-success"></i></div>
+                                <div class="stat-value display-6 fw-bold" id="totalAnalyses">0</div>
+                                <div class="stat-label">Total Analyses</div>
                             </div>
                         </div>
-                        <div class="text-center">
-                            <button type="submit" class="btn btn-analyze">
-                                <i class="fas fa-search me-2"></i>Analyze Plant Disease
-                            </button>
+                        <div class="col-6 col-md-4">
+                            <div class="card stat-card shadow h-100 text-center p-4 animate-hover" style="border-radius: 18px;">
+                                <div class="stat-icon mb-2"><i class="fas fa-leaf fa-2x text-success"></i></div>
+                                <div class="stat-value display-6 fw-bold" id="healthyPlants">0</div>
+                                <div class="stat-label">Healthy Plants</div>
+                            </div>
                         </div>
-                    </form>
-                </div>
-
-                <div class="loading">
-                    <div class="loading-spinner"></div>
-                    <p class="mt-3">Analyzing image...</p>
-                </div>
-
-                <div class="error-message" id="errorMessage"></div>
-
-                <div class="result-container" id="resultContainer">
-                    <div class="result-header">
-                        <h2>Analysis Results</h2>
-                    </div>
-                    <div class="result-content">
-                        <img id="resultImage" class="result-image mb-3 mx-auto d-block" src="" alt="Analyzed Plant">
-                        <h3 id="predictionResult" class="mb-4"></h3>
-                        <div id="confidenceScores"></div>
+                        <div class="col-12 col-md-4">
+                            <div class="card stat-card shadow h-100 text-center p-4 animate-hover" style="border-radius: 18px;">
+                                <div class="stat-icon mb-2"><i class="fas fa-bug fa-2x text-danger"></i></div>
+                                <div class="stat-value display-6 fw-bold" id="diseasedPlants">0</div>
+                                <div class="stat-label">Diseased Plants</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Features Section -->
-                <div class="features-section" id="features">
-                    <div class="container">
-                        <h2 class="text-center mb-5">Our Features</h2>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="feature-card">
-                                    <i class="fas fa-microscope feature-icon"></i>
-                                    <h4>Advanced Detection</h4>
-                                    <p>Using state-of-the-art AI models to detect plant diseases with high accuracy</p>
-                                </div>
+                <!-- FEATURES SECTION -->
+                <div class="container mb-5 animate-fadein" style="animation-delay: 0.8s;">
+                    <h2 class="text-center mb-5 fw-bold">Our Features</h2>
+                    <div class="row g-4 justify-content-center">
+                        <div class="col-12 col-md-4">
+                            <div class="feature-card card h-100 text-center p-4 shadow animate-hover" style="border-radius: 18px;">
+                                <i class="fas fa-microscope feature-icon mb-3"></i>
+                                <h4>Advanced Detection</h4>
+                                <p>State-of-the-art AI models for high-accuracy plant disease detection.</p>
+                                <a href="#" class="stretched-link text-success">Learn More</a>
                             </div>
-                            <div class="col-md-4">
-                                <div class="feature-card">
-                                    <i class="fas fa-leaf feature-icon"></i>
-                                    <h4>Multiple Plants</h4>
-                                    <p>Support for various plant types including apple, corn, grape, peach, and tomato</p>
-                                </div>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <div class="feature-card card h-100 text-center p-4 shadow animate-hover" style="border-radius: 18px;">
+                                <i class="fas fa-leaf feature-icon mb-3"></i>
+                                <h4>Multiple Plants</h4>
+                                <p>Support for apple, corn, grape, peach, tomato, and more.</p>
+                                <a href="#" class="stretched-link text-success">Learn More</a>
                             </div>
-                            <div class="col-md-4">
-                                <div class="feature-card">
-                                    <i class="fas fa-chart-line feature-icon"></i>
-                                    <h4>Detailed Analysis</h4>
-                                    <p>Get confidence scores and detailed information about detected diseases</p>
-                                </div>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <div class="feature-card card h-100 text-center p-4 shadow animate-hover" style="border-radius: 18px;">
+                                <i class="fas fa-chart-line feature-icon mb-3"></i>
+                                <h4>Detailed Analysis</h4>
+                                <p>Get confidence scores and detailed info about detected diseases.</p>
+                                <a href="#" class="stretched-link text-success">Learn More</a>
                             </div>
                         </div>
                     </div>
@@ -527,15 +542,7 @@
                 </div>
 
                 <!-- History Section -->
-                <div class="history-section" id="history">
-                    <h3 class="mb-4">Recent Analysis History</h3>
-                    <div id="analysisHistory" class="row">
-                        <!-- Analysis history items will be dynamically added here -->
-                    </div>
-                    <div id="moreHistoryMessage" class="text-center mt-3" style="display: none;">
-                        <p class="text-muted">Showing your 6 most recent analyses. <a href="/api/analysis/page/history" class="text-primary">View full history</a></p>
-                    </div>
-                </div>
+                <!-- Recent Analysis History section removed as per user request -->
             </div>
         </div>
     </div>
@@ -613,14 +620,45 @@
       </div>
     </div>
 
+    <!-- User Profile Modal -->
+    <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-success text-white">
+            <h5 class="modal-title" id="profileModalLabel"><i class="fas fa-user me-2"></i>My Profile</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="text-center mb-4">
+              <img th:src="${user != null && user.profilePicture != null && !#strings.isEmpty(user.profilePicture) ? user.profilePicture : '/images/default-avatar.png'}" src="/images/default-avatar.png" alt="Profile Picture" class="rounded-circle mb-3" style="width: 100px; height: 100px; object-fit: cover; border: 3px solid #4CAF50;">
+              <h4 th:text="${user != null ? user.name : 'Guest'}">Name</h4>
+              <div class="text-muted" th:text="${user != null ? user.email : 'Not logged in'}">Email</div>
+            </div>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item"><strong>Contact:</strong> <span th:text="${user != null ? user.phoneNumber : '-'}">-</span></li>
+              <li class="list-group-item"><strong>User Type:</strong> <span th:text="${user != null ? user.userType : '-'}">-</span></li>
+              <li class="list-group-item"><strong>Address:</strong> <span th:text="${user != null ? user.address : '-'}">-</span></li>
+              <li class="list-group-item"><strong>Postal Code:</strong> <span th:text="${user != null ? user.postalCode : '-'}">-</span></li>
+              <li class="list-group-item"><strong>City:</strong> <span th:text="${user != null ? user.city : '-'}">-</span></li>
+              <li class="list-group-item"><strong>State:</strong> <span th:text="${user != null ? user.state : '-'}">-</span></li>
+              <li class="list-group-item"><strong>Country:</strong> <span th:text="${user != null ? user.country : '-'}">-</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Always load stats on page load
+            loadAnalysisStats();
+            // Only run upload/drag-and-drop code if the elements exist
+            const uploadForm = document.getElementById('uploadFormElement');
             const uploadArea = document.getElementById('uploadArea');
             const imageInput = document.getElementById('image');
             const preview = document.getElementById('preview');
-            const uploadForm = document.getElementById('uploadForm');
-            const analyzeBtn = uploadForm.querySelector('.btn-analyze');
+            const analyzeBtn = uploadForm ? uploadForm.querySelector('.btn-analyze') : null;
             const plantType = document.getElementById('plantType');
             const resultCard = document.getElementById('resultCard');
             const resultContent = document.getElementById('resultContent');
@@ -630,126 +668,142 @@
             const sidebar = document.getElementById('sidebar');
             const mainContent = document.getElementById('mainContent');
             const sidebarToggle = document.getElementById('sidebarToggle');
+            const footer = document.querySelector('.footer');
 
-            // Load user profile
-            loadUserProfile();
+            if (uploadForm && uploadArea && imageInput && preview && analyzeBtn && plantType) {
+                // Load user profile
+                loadUserProfile();
 
-            // Load initial stats
-            loadAnalysisStats();
-            loadAnalysisHistory();
+                // Load initial stats
+                loadAnalysisStats();
+                loadAnalysisHistory();
 
-            // Handle drag and drop
-            uploadArea.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                uploadArea.classList.add('dragover');
-            });
+                // Handle drag and drop
+                uploadArea.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    uploadArea.classList.add('dragover');
+                });
 
-            uploadArea.addEventListener('dragleave', () => {
-                uploadArea.classList.remove('dragover');
-            });
+                uploadArea.addEventListener('dragleave', () => {
+                    uploadArea.classList.remove('dragover');
+                });
 
-            uploadArea.addEventListener('drop', (e) => {
-                e.preventDefault();
-                uploadArea.classList.remove('dragover');
-                const file = e.dataTransfer.files[0];
-                if (file && file.type.startsWith('image/')) {
-                    handleImageFile(file);
-                }
-            });
-
-            uploadArea.addEventListener('click', () => {
-                imageInput.click();
-            });
-
-            imageInput.addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    handleImageFile(file);
-                }
-            });
-
-            function handleImageFile(file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    preview.src = e.target.result;
-                    analyzeBtn.disabled = false;
-                };
-                reader.readAsDataURL(file);
-            }
-
-            uploadForm.addEventListener('submit', async function(e) {
-                e.preventDefault();
-                const file = imageInput.files[0];
-                if (!file) return;
-
-                const formData = new FormData();
-                formData.append('image', file);
-                formData.append('plantType', plantType.value);
-
-                loading.style.display = 'block';
-                document.getElementById('resultContainer').style.display = 'none';
-                analyzeBtn.disabled = true;
-                errorMessage.style.display = 'none';
-
-                try {
-                    const response = await fetch('/api/analyze', {
-                        method: 'POST',
-                        body: formData
-                    });
-
-                    const result = await response.json();
-                    
-                    if (result.status === 'success') {
-                        displayResult(result);
-                        loadAnalysisStats();
-                        loadAnalysisHistory();
-                    } else {
-                        errorMessage.textContent = result.message;
-                        errorMessage.style.display = 'block';
+                uploadArea.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    uploadArea.classList.remove('dragover');
+                    const file = e.dataTransfer.files[0];
+                    if (file && file.type.startsWith('image/')) {
+                        handleImageFile(file);
                     }
-                } catch (error) {
-                    errorMessage.textContent = 'Error analyzing image: ' + error.message;
-                    errorMessage.style.display = 'block';
-                } finally {
-                    loading.style.display = 'none';
-                    analyzeBtn.disabled = false;
-                }
-            });
+                });
 
-            function displayResult(result) {
-                const prediction = result.prediction;
-                // Get the highest confidence value
-                const confidence = (Math.max(...result.confidence_scores[0]) * 100).toFixed(2);
-                const isHealthy = prediction.includes('healthy');
-                const description = result.description || '';
-                const resultContent = document.querySelector('.result-content');
-                resultContent.innerHTML = `
-                    <div class="card shadow-lg p-4 mb-4 bg-white rounded text-center" style="max-width: 500px; margin: 0 auto;">
-                        <img id="resultImage" class="result-image mb-3 mx-auto d-block" src="/uploads/${result.imagePath}" alt="Analyzed Plant" style="max-width: 300px; border-radius: 15px; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
-                        <h4 class="mb-2">${isHealthy ? '<span class=\'badge bg-success\'>Healthy Plant</span>' : `<span class=\'badge bg-danger\'>Disease Detected</span>`}</h4>
-                        <h5 class="mb-3">${prediction.replace('Tomato___', '').replace('Apple___', '').replace('Corn_(maize)___', '').replace('Grape___', '').replace('Peach___', '')}</h5>
-                        <div class="mb-3">
-                            <label class="form-label">Confidence:</label>
-                            <div class="progress" style="height: 24px;">
-                                <div class="progress-bar ${isHealthy ? 'bg-success' : 'bg-danger'}" role="progressbar" style="width: ${confidence}%" aria-valuenow="${confidence}" aria-valuemin="0" aria-valuemax="100">${confidence}%</div>
+                uploadArea.addEventListener('click', () => {
+                    imageInput.click();
+                });
+
+                imageInput.addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        handleImageFile(file);
+                    }
+                });
+
+                function handleImageFile(file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        preview.src = e.target.result;
+                        analyzeBtn.disabled = false;
+                    };
+                    reader.readAsDataURL(file);
+                }
+
+                uploadForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    const file = imageInput.files[0];
+                    if (!file) return;
+
+                    const formData = new FormData();
+                    formData.append('image', file);
+                    formData.append('plantType', plantType.value);
+
+                    loading.style.display = 'block';
+                    document.getElementById('resultContainer').style.display = 'none';
+                    analyzeBtn.disabled = true;
+                    errorMessage.style.display = 'none';
+
+                    try {
+                        const response = await fetch('/api/analyze', {
+                            method: 'POST',
+                            body: formData
+                        });
+
+                        const result = await response.json();
+                        
+                        if (result.status === 'success') {
+                            displayResult(result);
+                            loadAnalysisStats();
+                            loadAnalysisHistory();
+                        } else {
+                            errorMessage.textContent = result.message;
+                            errorMessage.style.display = 'block';
+                        }
+                    } catch (error) {
+                        errorMessage.textContent = 'Error analyzing image: ' + error.message;
+                        errorMessage.style.display = 'block';
+                    } finally {
+                        loading.style.display = 'none';
+                        analyzeBtn.disabled = false;
+                    }
+                });
+
+                function displayResult(result) {
+                    const prediction = result.prediction;
+                    // Get the highest confidence value
+                    const confidence = (Math.max(...result.confidence_scores[0]) * 100).toFixed(2);
+                    const isHealthy = prediction.includes('healthy');
+                    const description = result.description || '';
+                    const resultContent = document.querySelector('.result-content');
+                    resultContent.innerHTML = `
+                        <div class="card shadow-lg p-4 mb-4 bg-white rounded text-center" style="max-width: 500px; margin: 0 auto;">
+                            <img id="resultImage" class="result-image mb-3 mx-auto d-block" src="/uploads/${result.imagePath}" alt="Analyzed Plant" style="max-width: 300px; border-radius: 15px; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
+                            <h4 class="mb-2">${isHealthy ? '<span class=\'badge bg-success\'>Healthy Plant</span>' : `<span class=\'badge bg-danger\'>Disease Detected</span>`}</h4>
+                            <h5 class="mb-3">${prediction.replace('Tomato___', '').replace('Apple___', '').replace('Corn_(maize)___', '').replace('Grape___', '').replace('Peach___', '')}</h5>
+                            <div class="mb-3">
+                                <label class="form-label">Confidence:</label>
+                                <div class="progress" style="height: 24px;">
+                                    <div class="progress-bar ${isHealthy ? 'bg-success' : 'bg-danger'}" role="progressbar" style="width: ${confidence}%" aria-valuenow="${confidence}" aria-valuemin="0" aria-valuemax="100">${confidence}%</div>
+                                </div>
                             </div>
+                            ${description ? `<div class='alert alert-info mt-3'>${description}</div>` : ''}
+                            <button class="btn btn-outline-primary mt-3" onclick="window.location.reload()">Analyze Another</button>
                         </div>
-                        ${description ? `<div class='alert alert-info mt-3'>${description}</div>` : ''}
-                        <button class="btn btn-outline-primary mt-3" onclick="window.location.reload()">Analyze Another</button>
-                    </div>
-                `;
-                document.getElementById('resultContainer').style.display = 'block';
+                    `;
+                    document.getElementById('resultContainer').style.display = 'block';
+                }
             }
 
             async function loadAnalysisStats() {
                 try {
-                    const response = await fetch('/api/analysis/stats');
+                    const response = await fetch('/api/analysis/stats', {
+                        credentials: 'include'  // Ensure cookies/session are sent
+                    });
+                    if (!response.ok) {
+                        if (response.status === 401 || response.status === 403) {
+                            document.getElementById('totalAnalyses').textContent = '-';
+                            document.getElementById('healthyPlants').textContent = '-';
+                            document.getElementById('diseasedPlants').textContent = '-';
+                            return;
+                        }
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
                     const stats = await response.json();
-                    
                     document.getElementById('totalAnalyses').textContent = stats.totalAnalyses || 0;
                     document.getElementById('healthyPlants').textContent = stats.healthyPlants || 0;
                     document.getElementById('diseasedPlants').textContent = stats.diseasedPlants || 0;
                 } catch (error) {
+                    document.getElementById('totalAnalyses').textContent = '-';
+                    document.getElementById('healthyPlants').textContent = '-';
+                    document.getElementById('diseasedPlants').textContent = '-';
                     console.error('Error loading stats:', error);
                 }
             }
@@ -760,10 +814,12 @@
                     const history = await response.json();
                     const historyList = document.getElementById('analysisHistory');
                     const moreHistoryMessage = document.getElementById('moreHistoryMessage');
+                    const historyErrorMessage = document.getElementById('historyErrorMessage');
                     
                     if (!Array.isArray(history) || history.length === 0) {
                         historyList.innerHTML = '<div class="text-center text-muted">No analysis history found.</div>';
                         moreHistoryMessage.style.display = 'none';
+                        historyErrorMessage.style.display = 'none';
                         return;
                     }
                     
@@ -788,10 +844,13 @@
                     
                     // Show the "more history" message if we have exactly 6 items
                     moreHistoryMessage.style.display = history.length === 6 ? 'block' : 'none';
+                    historyErrorMessage.style.display = 'none';
                 } catch (error) {
                     const historyList = document.getElementById('analysisHistory');
+                    const historyErrorMessage = document.getElementById('historyErrorMessage');
                     historyList.innerHTML = '<div class="text-danger">Error loading history.</div>';
-                    console.error('Error loading history:', error);
+                    historyErrorMessage.textContent = 'Error loading history: ' + error.message;
+                    historyErrorMessage.style.display = 'block';
                 }
             }
 
@@ -812,11 +871,11 @@
                         `Member since ${joinDate.toLocaleDateString()}`;
 
                     // Update stats
-                    if (profile.stats) {
-                        document.getElementById('totalAnalyses').textContent = profile.stats.totalAnalyses || 0;
-                        document.getElementById('healthyPlants').textContent = profile.stats.healthyPlants || 0;
-                        document.getElementById('diseasedPlants').textContent = profile.stats.diseasedPlants || 0;
-                    }
+                    // if (profile.stats) {
+                    //     document.getElementById('totalAnalyses').textContent = profile.stats.totalAnalyses || 0;
+                    //     document.getElementById('healthyPlants').textContent = profile.stats.healthyPlants || 0;
+                    //     document.getElementById('diseasedPlants').textContent = profile.stats.diseasedPlants || 0;
+                    // }
                 } catch (error) {
                     console.error('Error loading user profile:', error);
                     document.getElementById('userName').textContent = 'Guest User';
@@ -841,10 +900,18 @@
 
             // Handle sidebar item clicks
             document.querySelectorAll('.sidebar-item').forEach(item => {
-                item.addEventListener('click', function() {
-                    if (window.innerWidth <= 768) {
-                        sidebar.classList.remove('expanded');
-                        mainContent.classList.remove('expanded');
+                item.addEventListener('click', function(e) {
+                    const text = this.textContent.trim();
+                    if (text === 'History') {
+                        window.location.href = '/api/analysis/page/history';
+                    } else if (text === 'Features') {
+                        e.preventDefault();
+                        document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
+                    } else if (text === 'About') {
+                        e.preventDefault();
+                        document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' });
+                    } else if (text === 'Upgrade') {
+                        window.location.href = '/subscription';
                     }
                 });
             });
@@ -963,6 +1030,37 @@
                     alert('Error updating profile');
                 }
             });
+
+            // Fix: Remove leftover modal-backdrop and reset body state when Edit Profile modal is closed
+            const editProfileModal = document.getElementById('editProfileModal');
+            editProfileModal.addEventListener('hidden.bs.modal', function () {
+                // Properly close dropdown
+                const userDropdownBtn = document.getElementById('userDropdown');
+                if (userDropdownBtn) {
+                    const dropdownInstance = bootstrap.Dropdown.getOrCreateInstance(userDropdownBtn);
+                    dropdownInstance.hide();
+                }
+                // Remove any lingering modal-backdrop
+                document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+                // Reset body class and style
+                document.body.classList.remove('modal-open');
+                document.body.style.overflow = '';
+                document.body.style.paddingRight = '';
+            });
+
+            // Responsive footer shift with sidebar
+            function updateFooterShift() {
+                if (sidebar.classList.contains('expanded') && window.innerWidth > 991) {
+                    footer.classList.add('shifted');
+                } else {
+                    footer.classList.remove('shifted');
+                }
+            }
+            document.getElementById('sidebarToggle').addEventListener('click', function() {
+                setTimeout(updateFooterShift, 310); // after sidebar transition
+            });
+            window.addEventListener('resize', updateFooterShift);
+            updateFooterShift();
         });
     </script>
 </body>

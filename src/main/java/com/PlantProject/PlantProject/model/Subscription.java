@@ -1,6 +1,5 @@
-package com.PlantProject.model;
+package com.PlantProject.PlantProject.model;
 
-import com.PlantProject.PlantProject.model.User;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 

@@ -4,15 +4,17 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "analyses")
-public class Analysis {
+@Table(name = "analysis_results")
+public class AnalysisResult {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @Column(name = "user_id")
+    private Long userId;
+
+    @Column(name = "image_path")
+    private String imagePath;
 
     @Column(name = "plant_name")
     private String plantName;
@@ -23,11 +25,13 @@ public class Analysis {
     @Column(name = "confidence")
     private double confidence;
 
-    @Column(name = "image_path")
-    private String imagePath;
+    @Column(name = "analysis_date")
+    private LocalDateTime analysisDate;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    // Default constructor
+    public AnalysisResult() {
+        this.analysisDate = LocalDateTime.now();
+    }
 
     // Getters and Setters
     public Long getId() {
@@ -38,12 +42,20 @@ public class Analysis {
         this.id = id;
     }
 
-    public User getUser() {
-        return user;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 
     public String getPlantName() {
@@ -70,19 +82,11 @@ public class Analysis {
         this.confidence = confidence;
     }
 
-    public String getImagePath() {
-        return imagePath;
+    public LocalDateTime getAnalysisDate() {
+        return analysisDate;
     }
 
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+    public void setAnalysisDate(LocalDateTime analysisDate) {
+        this.analysisDate = analysisDate;
     }
 } 

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Plant Analysis Results</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+    <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+        <h2 style="color: #2c3e50; text-align: center;">Plant Disease Analysis Results</h2>
+        
+        <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <p style="margin-bottom: 15px;">
+                <strong style="color: #2c3e50;">Plant Name:</strong><br>
+                <span th:text="${plantName}" style="color: #34495e;">Plant</span>
+            </p>
+            
+            <p style="margin-bottom: 15px;">
+                <strong style="color: #2c3e50;">Disease Detected:</strong><br>
+                <span th:text="${disease}" style="color: #34495e;">Disease</span>
+            </p>
+            
+            <p style="margin-bottom: 15px;">
+                <strong style="color: #2c3e50;">Confidence Level:</strong><br>
+                <span th:text="${confidence}" style="color: #34495e;">Confidence</span>
+            </p>
+            
+            <div style="margin: 20px 0; padding: 15px; background-color: #e8f4f8; border-radius: 5px;">
+                <p style="margin: 0; color: #2980b9;">
+                    <strong>Note:</strong> The analyzed plant image is attached to this email.
+                </p>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            <p style="color: #7f8c8d;">Thank you for using our Plant Disease Detection service.</p>
+            <p style="color: #7f8c8d; font-size: 0.9em;">You can view your complete analysis history in your dashboard.</p>
+        </div>
+        
+        <hr style="border: 1px solid #eee; margin: 20px 0;">
+        <p style="color: #95a5a6; font-size: 12px; text-align: center;">This is an automated message, please do not reply.</p>
+    </div>
+</body>
+</html> 

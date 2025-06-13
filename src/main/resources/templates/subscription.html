@@ -109,6 +109,7 @@
     </style>
 </head>
 <body>
+    <div th:replace="~{navbar :: navbar}"></div>
     <div class="container">
         <div class="pricing-header">
             <h1>Choose Your Plan</h1>
@@ -238,8 +239,7 @@
                 body: JSON.stringify({
                     razorpay_payment_id: response.razorpay_payment_id,
                     razorpay_order_id: response.razorpay_order_id,
-                    razorpay_signature: response.razorpay_signature,
-                    orderId: orderId
+                    razorpay_signature: response.razorpay_signature
                 })
             })
             .then(response => response.json())
@@ -284,6 +284,8 @@
                     // Remove error message after 5 seconds
                     setTimeout(() => {
                         document.body.removeChild(errorAlert);
+                        // Redirect to dashboard even on failure
+                        window.location.href = '/dashboard';
                     }, 5000);
                 }
             })
@@ -302,15 +304,14 @@
                 errorAlert.style.padding = '15px 30px';
                 errorAlert.style.borderRadius = '5px';
                 errorAlert.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
-                errorAlert.innerHTML = '<i class="fas fa-exclamation-circle me-2"></i>Something went wrong. Please try again.';
+                errorAlert.innerHTML = '<i class="fas fa-exclamation-circle me-2"></i>An error occurred. Please try again.';
                 document.body.appendChild(errorAlert);
 
-                // Remove error message after 5 seconds
+                // Remove error message after 5 seconds and redirect
                 setTimeout(() => {
                     document.body.removeChild(errorAlert);
+                    window.location.href = '/dashboard';
                 }, 5000);
-
-                console.error('Error:', error);
             });
         }
     </script>

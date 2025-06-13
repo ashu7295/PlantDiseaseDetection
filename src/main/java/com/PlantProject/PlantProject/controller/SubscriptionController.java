@@ -1,23 +1,26 @@
-package com.PlantProject.controller;
+package com.PlantProject.PlantProject.controller;
 
-import com.PlantProject.model.Subscription;
+import com.PlantProject.PlantProject.model.Subscription;
 import com.PlantProject.PlantProject.model.User;
-import com.PlantProject.service.RazorpayService;
-import com.PlantProject.service.SubscriptionService;
+import com.PlantProject.PlantProject.service.RazorpayService;
+import com.PlantProject.PlantProject.service.SubscriptionService;
 import com.PlantProject.PlantProject.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-@Controller
+@RestController
 @RequestMapping("/api")
 public class SubscriptionController {
+
+    private static final Logger logger = LoggerFactory.getLogger(SubscriptionController.class);
 
     @Autowired
     private RazorpayService razorpayService;
@@ -34,6 +37,8 @@ public class SubscriptionController {
         try {
             String planType = request.get("plan");
             User user = userService.getCurrentUser();
+
+            logger.info("Creating order for user: {} with plan: {}", user.getEmail(), planType);
 
             Map<String, Object> orderDetails = razorpayService.createOrder(planType);
             
@@ -60,6 +65,7 @@ public class SubscriptionController {
             }
             
             subscriptionService.saveSubscription(subscription);
+            logger.info("Created pending subscription for order: {}", orderDetails.get("orderId"));
 
             Map<String, Object> response = new HashMap<>();
             response.put("orderId", orderDetails.get("orderId"));
@@ -70,6 +76,7 @@ public class SubscriptionController {
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
+            logger.error("Error creating order", e);
             Map<String, String> error = new HashMap<>();
             error.put("error", e.getMessage());
             return ResponseEntity.badRequest().body(error);
@@ -84,6 +91,8 @@ public class SubscriptionController {
             String paymentId = request.get("razorpay_payment_id");
             String signature = request.get("razorpay_signature");
 
+            logger.info("Verifying payment for order: {}", orderId);
+
             boolean isValid = razorpayService.verifyPayment(orderId, paymentId, signature);
 
             if (isValid) {
@@ -94,20 +103,27 @@ public class SubscriptionController {
                     subscription.setRazorpayPaymentId(paymentId);
                     subscription.setRazorpaySignature(signature);
                     subscriptionService.saveSubscription(subscription);
+                    logger.info("Payment verified and subscription activated for order: {}", orderId);
+                } else {
+                    logger.error("Subscription not found for order: {}", orderId);
                 }
 
                 Map<String, Object> response = new HashMap<>();
                 response.put("success", true);
+                response.put("message", "Payment verified successfully");
                 return ResponseEntity.ok(response);
             } else {
+                logger.error("Payment verification failed for order: {}", orderId);
                 Map<String, Object> response = new HashMap<>();
                 response.put("success", false);
                 response.put("message", "Payment verification failed");
                 return ResponseEntity.ok(response);
             }
         } catch (Exception e) {
-            Map<String, String> error = new HashMap<>();
-            error.put("error", e.getMessage());
+            logger.error("Error verifying payment", e);
+            Map<String, Object> error = new HashMap<>();
+            error.put("success", false);
+            error.put("message", "Error verifying payment: " + e.getMessage());
             return ResponseEntity.badRequest().body(error);
         }
     }
@@ -130,6 +146,7 @@ public class SubscriptionController {
             
             return ResponseEntity.ok(response);
         } catch (Exception e) {
+            logger.error("Error getting subscription status", e);
             Map<String, String> error = new HashMap<>();
             error.put("error", e.getMessage());
             return ResponseEntity.badRequest().body(error);

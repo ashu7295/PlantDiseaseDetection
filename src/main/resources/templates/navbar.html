@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-success bg-success">
+        <div class="container-fluid d-flex" th:classappend="${currentPath != '/dashboard'} ? ' justify-content-center' : ''">
+            <div th:if="${currentPath != '/dashboard'}" class="w-100 d-flex justify-content-center">
+                <a class="navbar-brand text-white" href="/dashboard">
+                    <i class="fas fa-leaf me-2"></i>Plant Disease Detection
+                </a>
+            </div>
+            <a th:if="${currentPath == '/dashboard'}" class="navbar-brand text-white" href="/dashboard">
+                <i class="fas fa-leaf me-2"></i>Plant Disease Detection
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <!-- Show Back to Dashboard only on analysis page -->
+                    <li class="nav-item" th:if="${currentPath == '/analyze'}">
+                        <a class="nav-link text-white d-flex align-items-center" href="/dashboard">
+                            <i class="fas fa-arrow-left me-2"></i> Back to Dashboard
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <style>
+    .user-dropdown-menu {
+        border-radius: 20px !important;
+        box-shadow: 0 8px 32px rgba(60,60,60,0.18) !important;
+        border: none;
+        margin-top: 12px !important;
+    }
+    .user-dropdown-menu .dropdown-item {
+        border-radius: 10px;
+        transition: background 0.15s;
+    }
+    .user-dropdown-menu .dropdown-item:active, .user-dropdown-menu .dropdown-item:focus {
+        background: #f3f6fa;
+    }
+    /* Navbar text color for visibility */
+    .navbar .nav-link,
+    .navbar .navbar-brand,
+    .navbar .dropdown-toggle,
+    .navbar .dropdown-item {
+        color: #fff !important;
+    }
+    .navbar .dropdown-item:hover,
+    .navbar .dropdown-item:focus {
+        background: #f3f6fa;
+        color: #198754 !important;
+    }
+    </style>
+</body>
+</html> 
