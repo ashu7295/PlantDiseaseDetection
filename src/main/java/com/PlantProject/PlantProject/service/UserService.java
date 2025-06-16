@@ -41,7 +41,7 @@ public class UserService {
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setName(request.getName());
-        user.setVerified(true);
+        user.setVerified(false);
         return userRepository.save(user);
     }
 
@@ -197,22 +197,25 @@ public class UserService {
 
     @Transactional
     public User updateUser(User user) {
-        User existingUser = userRepository.findById(user.getId())
-            .orElseThrow(() -> new RuntimeException("User not found"));
+        // Get current user from security context
+        User currentUser = getCurrentUser();
+        if (currentUser == null) {
+            throw new RuntimeException("User not found");
+        }
         
         // Update fields
-        existingUser.setName(user.getName());
-        existingUser.setPhoneNumber(user.getPhoneNumber());
-        existingUser.setAddress(user.getAddress());
-        existingUser.setCity(user.getCity());
-        existingUser.setState(user.getState());
-        existingUser.setCountry(user.getCountry());
-        existingUser.setPostalCode(user.getPostalCode());
-        existingUser.setFarmSize(user.getFarmSize());
-        existingUser.setCropsGrown(user.getCropsGrown());
-        existingUser.setYearsOfExperience(user.getYearsOfExperience());
-        existingUser.setSpecialization(user.getSpecialization());
+        currentUser.setName(user.getName());
+        currentUser.setPhoneNumber(user.getPhoneNumber());
+        currentUser.setAddress(user.getAddress());
+        currentUser.setCity(user.getCity());
+        currentUser.setState(user.getState());
+        currentUser.setCountry(user.getCountry());
+        currentUser.setPostalCode(user.getPostalCode());
+        currentUser.setFarmSize(user.getFarmSize());
+        currentUser.setCropsGrown(user.getCropsGrown());
+        currentUser.setYearsOfExperience(user.getYearsOfExperience());
+        currentUser.setSpecialization(user.getSpecialization());
         
-        return userRepository.save(existingUser);
+        return userRepository.save(currentUser);
     }
 } 

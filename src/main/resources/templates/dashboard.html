@@ -718,7 +718,7 @@
         <section class="hero-section text-white d-flex align-items-center justify-content-center" id="dashboard">
             <div class="container hero-content text-center">
                 <h1 class="hero-title animate-fadein">
-                    Welcome, <span th:text="${user != null ? user.name : 'Guest'}">User</span>!
+                    Welcome, <span th:text="${user != null and user.name != null ? user.name : 'User'}">User</span>!
                 </h1>
                 <p class="hero-subtitle animate-fadein" style="animation-delay: 0.2s;">
                     Empowering you to detect plant diseases early and keep your crops healthy with AI-powered analysis.
@@ -736,7 +736,7 @@
                     <div class="col-md-4">
                         <div class="stat-card">
                             <div class="stat-icon total">
-                                <i class="fas fa-chart-bar"></i>
+                                <i class="fas fa-microscope"></i>
                             </div>
                             <div class="stat-value" id="totalAnalyses">0</div>
                             <div class="stat-label">Total Analyses</div>
@@ -745,7 +745,7 @@
                     <div class="col-md-4">
                         <div class="stat-card">
                             <div class="stat-icon healthy">
-                                <i class="fas fa-leaf"></i>
+                                <i class="fas fa-check-circle"></i>
                             </div>
                             <div class="stat-value" id="healthyPlants">0</div>
                             <div class="stat-label">Healthy Plants</div>
@@ -754,7 +754,7 @@
                     <div class="col-md-4">
                         <div class="stat-card">
                             <div class="stat-icon diseased">
-                                <i class="fas fa-bug"></i>
+                                <i class="fas fa-exclamation-triangle"></i>
                             </div>
                             <div class="stat-value" id="diseasedPlants">0</div>
                             <div class="stat-label">Diseased Plants</div>
@@ -1002,28 +1002,53 @@
                     
                     const stats = await response.json();
                     
-                    // Check if response contains error
                     if (stats.error) {
                         console.warn('Stats API error:', stats.error);
                         updateStatsDisplay(0, 0, 0);
                         return;
                     }
                     
-                    updateStatsDisplay(
-                        stats.totalAnalyses || 0,
-                        stats.healthyPlants || 0,
-                        stats.diseasedPlants || 0
-                    );
+                    // Update stats display with animation
+                    animateValue('totalAnalyses', 0, stats.totalAnalyses || 0, 1000);
+                    animateValue('healthyPlants', 0, stats.healthyPlants || 0, 1000);
+                    animateValue('diseasedPlants', 0, stats.diseasedPlants || 0, 1000);
                     
                     // Update analysis limits
                     updateAnalysisLimits(stats);
-                    
-                    // Animate counters
-                    animateCounters();
                 } catch (error) {
                     console.error('Error loading stats:', error);
                     updateStatsDisplay(0, 0, 0);
                 }
+            }
+            
+            function animateValue(elementId, start, end, duration) {
+                const element = document.getElementById(elementId);
+                if (!element) return;
+                
+                const range = end - start;
+                const minTimer = 50;
+                let stepTime = Math.abs(Math.floor(duration / range));
+                stepTime = Math.max(stepTime, minTimer);
+                
+                let current = start;
+                const step = Math.sign(range);
+                
+                function updateNumber() {
+                    current += step;
+                    element.textContent = current;
+                    
+                    if (current != end) {
+                        setTimeout(updateNumber, stepTime);
+                    }
+                }
+                
+                updateNumber();
+            }
+            
+            function updateStatsDisplay(total, healthy, diseased) {
+                document.getElementById('totalAnalyses').textContent = total;
+                document.getElementById('healthyPlants').textContent = healthy;
+                document.getElementById('diseasedPlants').textContent = diseased;
             }
 
             function updateAnalysisLimits(stats) {
@@ -1093,32 +1118,6 @@
                 }
             }
 
-            function updateStatsDisplay(total, healthy, diseased) {
-                document.getElementById('totalAnalyses').textContent = total;
-                document.getElementById('healthyPlants').textContent = healthy;
-                document.getElementById('diseasedPlants').textContent = diseased;
-            }
-
-            function animateCounters() {
-                const counters = document.querySelectorAll('.stat-value');
-                counters.forEach(counter => {
-                    const target = parseInt(counter.textContent);
-                    if (isNaN(target)) return;
-                    
-                    let current = 0;
-                    const increment = target / 30;
-                    const timer = setInterval(() => {
-                        current += increment;
-                        if (current >= target) {
-                            counter.textContent = target;
-                            clearInterval(timer);
-                        } else {
-                            counter.textContent = Math.floor(current);
-                        }
-                    }, 50);
-                });
-            }
-
             // Load recent activity
             async function loadRecentActivity() {
                 try {
@@ -1174,34 +1173,81 @@
             // Load user profile
             async function loadUserProfile() {
                 try {
-                    const response = await fetch('/api/user/profile');
-                    const profile = await response.json();
+                    const response = await fetch('/api/user/profile', {
+                        credentials: 'include'
+                    });
                     
-                    if (profile.status === 'error') {
-                        console.error('Error loading profile:', profile.message);
+                    if (!response.ok) {
+                        console.warn('Profile API returned error:', response.status);
+                        updateProfileDisplay('User', 'Logged in', null);
                         return;
                     }
-
-                    // Update dropdown if elements exist
-                    const dropdownUserName = document.getElementById('dropdownUserName');
-                    const dropdownUserEmail = document.getElementById('dropdownUserEmail');
                     
-                    if (dropdownUserName) {
-                        dropdownUserName.textContent = profile.name || 'Guest';
+                    const profile = await response.json();
+                    
+                    if (profile.error) {
+                        console.warn('Profile API error:', profile.error);
+                        updateProfileDisplay('User', 'Logged in', null);
+                        return;
                     }
-                    if (dropdownUserEmail) {
-                        dropdownUserEmail.textContent = profile.email || 'Not logged in';
-                    }
-
-                    // Update navbar stats
-                    if (profile.stats) {
-                        const totalAnalysesCount = document.getElementById('totalAnalysesCount');
-                        if (totalAnalysesCount) {
-                            totalAnalysesCount.textContent = profile.stats.totalAnalyses || 0;
-                        }
-                    }
+                    
+                    // Update profile display
+                    const name = profile.name || 'User';
+                    const role = profile.userRole ? profile.userRole.replace('ROLE_', '') : 'USER';
+                    const email = profile.email || '';
+                    
+                    updateProfileDisplay(name, role, email);
+                    
+                    // Update welcome message
+                    document.querySelector('.hero-title span').textContent = name;
+                    
+                    // Update profile modal
+                    document.getElementById('profileModalInitials').textContent = name.split(' ').map(n => n[0]).join('').toUpperCase();
+                    document.getElementById('profileModalName').textContent = name;
+                    document.getElementById('profileModalEmail').textContent = email;
+                    
+                    // Update dropdown profile
+                    document.getElementById('dropdownUserInitials').textContent = name.split(' ').map(n => n[0]).join('').toUpperCase();
+                    document.getElementById('dropdownUserName').textContent = name;
+                    document.getElementById('dropdownUserEmail').textContent = email;
+                    document.getElementById('userStatusText').textContent = 'Active Member';
+                    
+                    // Update profile info if available
+                    if (profile.phoneNumber) document.getElementById('profilePhoneDisplay').textContent = profile.phoneNumber;
+                    if (profile.userType) document.getElementById('profileUserTypeDisplay').textContent = profile.userType;
+                    if (profile.city) document.getElementById('profileCityDisplay').textContent = profile.city;
+                    if (profile.state) document.getElementById('profileStateDisplay').textContent = profile.state;
+                    if (profile.address) document.getElementById('profileAddressDisplay').textContent = profile.address;
+                    
                 } catch (error) {
-                    console.error('Error loading user profile:', error);
+                    console.error('Error loading profile:', error);
+                    updateProfileDisplay('User', 'Logged in', null);
+                }
+            }
+            
+            function updateProfileDisplay(name, role, email) {
+                const initials = name.split(' ').map(n => n[0]).join('').toUpperCase();
+                
+                // Update navbar profile
+                document.getElementById('userInitials').textContent = initials;
+                document.getElementById('userNameDisplay').textContent = name;
+                document.getElementById('userRoleDisplay').textContent = role;
+                
+                // Update hero section
+                document.querySelector('.hero-title span').textContent = name;
+                
+                // Update dropdown profile if elements exist
+                if (document.getElementById('dropdownUserInitials')) {
+                    document.getElementById('dropdownUserInitials').textContent = initials;
+                }
+                if (document.getElementById('dropdownUserName')) {
+                    document.getElementById('dropdownUserName').textContent = name;
+                }
+                if (document.getElementById('dropdownUserEmail')) {
+                    document.getElementById('dropdownUserEmail').textContent = email || '';
+                }
+                if (document.getElementById('userStatusText')) {
+                    document.getElementById('userStatusText').textContent = 'Active Member';
                 }
             }
 
@@ -1226,7 +1272,10 @@
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                 anchor.addEventListener('click', function (e) {
                     e.preventDefault();
-                    const target = document.querySelector(this.getAttribute('href'));
+                    const href = this.getAttribute('href');
+                    if (!href || href === '#') return;
+                    
+                    const target = document.querySelector(href);
                     if (target) {
                         target.scrollIntoView({
                             behavior: 'smooth',

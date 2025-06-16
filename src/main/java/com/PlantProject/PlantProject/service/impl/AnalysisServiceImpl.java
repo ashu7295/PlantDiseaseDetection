@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
 
 @Service
 public class AnalysisServiceImpl implements AnalysisService {
@@ -94,27 +95,60 @@ public class AnalysisServiceImpl implements AnalysisService {
                     plantType
                 );
                 pb.directory(new File(pythonAppPath));
-                pb.redirectErrorStream(true);
                 Process process = pb.start();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                StringBuilder output = new StringBuilder();
+                
+                // Read stdout (JSON output)
+                BufferedReader stdoutReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                StringBuilder jsonOutput = new StringBuilder();
                 String line;
-                while ((line = reader.readLine()) != null) {
-                    output.append(line);
+                String lastJsonLine = null;
+                while ((line = stdoutReader.readLine()) != null) {
+                    jsonOutput.append(line).append("\n");
+                    if (line.trim().startsWith("{")) {
+                        lastJsonLine = line.trim();
+                    }
                 }
+                
+                // Read stderr (logs)
+                BufferedReader stderrReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+                StringBuilder logs = new StringBuilder();
+                while ((line = stderrReader.readLine()) != null) {
+                    logs.append(line).append("\n");
+                }
+                
                 int exitCode = process.waitFor();
-                logger.info("Python script exited with code {}", exitCode);
-                String json = output.toString();
-                logger.info("Python output: {}", json);
+                logger.info("Python script exited with code " + exitCode);
+                logger.info("Python logs: " + logs.toString());
+                logger.info("Python JSON output: " + jsonOutput.toString());
+
+                if (exitCode != 0) {
+                    throw new RuntimeException("Python script failed with exit code " + exitCode);
+                }
+
+                if (lastJsonLine == null) {
+                    throw new RuntimeException("No JSON output found in Python script output");
+                }
+
+                // Parse the last JSON line found
                 ObjectMapper mapper = new ObjectMapper();
-                if (json.contains("status") && json.contains("success")) {
+                JsonNode resultNode = mapper.readTree(lastJsonLine);
+                
+                if (!resultNode.has("status")) {
+                    throw new RuntimeException("Invalid JSON output: missing 'status' field");
+                }
+                
+                if ("error".equals(resultNode.get("status").asText())) {
+                    String errorMsg = resultNode.has("message") ? resultNode.get("message").asText() : "Unknown error";
+                    throw new RuntimeException("Python script error: " + errorMsg);
+                }
+                
+                if ("success".equals(resultNode.get("status").asText())) {
                     // Parse real result
-                    var node = mapper.readTree(json);
                     result.setPlantName(plantType.substring(0, 1).toUpperCase() + plantType.substring(1));
-                    result.setDisease(node.has("prediction") ? node.get("prediction").asText() : "Unknown");
-                    if (node.has("confidence_scores")) {
+                    result.setDisease(resultNode.has("prediction") ? resultNode.get("prediction").asText() : "Unknown");
+                    if (resultNode.has("confidence_scores")) {
                         // Use the highest confidence
-                        var scores = node.get("confidence_scores").get(0);
+                        var scores = resultNode.get("confidence_scores").get(0);
                         double max = 0.0;
                         for (var s : scores) {
                             max = Math.max(max, s.asDouble());
@@ -124,10 +158,7 @@ public class AnalysisServiceImpl implements AnalysisService {
                         result.setConfidence(0.95);
                     }
                 } else {
-                    // Fallback to mock if error
-                    result.setPlantName(plantType.substring(0, 1).toUpperCase() + plantType.substring(1));
-                    result.setDisease("Unknown");
-                    result.setConfidence(0.0);
+                    throw new RuntimeException("Invalid status value in JSON output");
                 }
             } catch (Exception ex) {
                 logger.error("Error running Python script", ex);

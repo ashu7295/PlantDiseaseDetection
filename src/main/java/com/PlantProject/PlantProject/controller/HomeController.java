@@ -12,6 +12,8 @@ import com.PlantProject.PlantProject.dto.SignupRequest;
 import com.PlantProject.PlantProject.service.UserService;
 import com.PlantProject.PlantProject.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import com.PlantProject.PlantProject.service.AnalysisService;
+import java.util.Map;
 
 @Log4j2
 @Controller
@@ -19,6 +21,9 @@ public class HomeController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private AnalysisService analysisService;
 
     @GetMapping("/")
     public String home() {
@@ -70,11 +75,23 @@ public class HomeController {
 
     @GetMapping("/dashboard")
     public String dashboard(Authentication authentication, Model model) {
-        if (authentication != null && authentication.isAuthenticated()) {
+        if (authentication != null && authentication.isAuthenticated() && !authentication.getName().equals("anonymousUser")) {
             String email = authentication.getName();
             User user = userService.findByEmail(email);
-            model.addAttribute("user", user);
-            return "dashboard";
+            if (user != null) {
+                model.addAttribute("user", user);
+                Map<String, Object> stats = analysisService.getUserAnalysisStats(user);
+                model.addAttribute("stats", stats);
+                model.addAttribute("isAuthenticated", true);
+                model.addAttribute("userEmail", user.getEmail());
+                model.addAttribute("userName", user.getName() != null ? user.getName() : user.getEmail());
+                String userRole = "USER";
+                if (user.getUserRole() != null) {
+                    userRole = user.getUserRole().toString();
+                }
+                model.addAttribute("userRole", userRole);
+                return "dashboard";
+            }
         }
         return "redirect:/login";
     }

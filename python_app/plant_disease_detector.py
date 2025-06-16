@@ -6,10 +6,16 @@ from PIL import Image
 import logging
 import os
 
-# Configure logging
+# Suppress TensorFlow logging
+tf.get_logger().setLevel('ERROR')
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # FATAL
+os.environ['CUDA_VISIBLE_DEVICES'] = '-1'  # Disable GPU
+
+# Configure logging to write to stderr
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    stream=sys.stderr
 )
 logger = logging.getLogger(__name__)
 
@@ -88,7 +94,7 @@ def model_prediction(test_image, plant_type):
     
     model_config = MODEL_CONFIGS[plant_type]
     logger.info(f"Loading model from: {model_config['path']}")
-    model = tf.keras.models.load_model(model_config['path'])
+    model = tf.keras.models.load_model(model_config['path'], compile=False)
     
     logger.info(f"Processing image: {test_image}")
     image = Image.open(test_image).convert("RGB")  # Ensure 3 channels
@@ -97,7 +103,7 @@ def model_prediction(test_image, plant_type):
     input_arr = np.expand_dims(input_arr, axis=0)  # Add batch dimension
     
     logger.info("Making prediction...")
-    predictions = model.predict(input_arr)
+    predictions = model.predict(input_arr, verbose=0)
     result_index = np.argmax(predictions)
     logger.info(f"Prediction complete. Result index: {result_index}")
     
@@ -110,10 +116,11 @@ if __name__ == "__main__":
     if len(sys.argv) != 3:
         error_msg = "Usage: python plant_disease_detector.py <image_path> <plant_type>"
         logger.error(error_msg)
-        print(json.dumps({
+        json_output = {
             "status": "error",
             "message": error_msg
-        }), flush=True)
+        }
+        print(json.dumps(json_output), flush=True)
         sys.exit(1)
         
     try:
@@ -124,27 +131,31 @@ if __name__ == "__main__":
         if plant_type not in MODEL_CONFIGS:
             error_msg = f"Unsupported plant type: {plant_type}. Supported types are: {list(MODEL_CONFIGS.keys())}"
             logger.error(error_msg)
-            print(json.dumps({
+            json_output = {
                 "status": "error",
                 "message": error_msg
-            }), flush=True)
+            }
+            print(json.dumps(json_output), flush=True)
             sys.exit(1)
             
         result_index, predictions = model_prediction(image_path, plant_type)
         
-        result = {
+        json_output = {
             "status": "success",
             "plant_type": plant_type,
             "prediction": CLASS_NAMES[plant_type][result_index],
             "confidence_scores": predictions.tolist()
         }
-        logger.info(f"Prediction result: {result['prediction']}")
-        print(json.dumps(result), flush=True)
+        logger.info(f"Prediction result: {json_output['prediction']}")
+        logger.info("Writing JSON output to stdout")
+        print(json.dumps(json_output), flush=True)
+        logger.info("JSON output written successfully")
         
     except Exception as e:
         logger.error(f"Error during prediction: {str(e)}", exc_info=True)
-        print(json.dumps({
+        json_output = {
             "status": "error",
             "message": str(e)
-        }), flush=True)
+        }
+        print(json.dumps(json_output), flush=True)
         sys.exit(1)

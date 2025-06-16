@@ -76,7 +76,7 @@ public class User implements UserDetails {
     private String providerId;
 
     @Column(name = "is_verified")
-    private boolean verified = false;
+    private Boolean verified = false;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -100,6 +100,9 @@ public class User implements UserDetails {
         }
         if (freeAnalysesLimit == null) {
             freeAnalysesLimit = 10;
+        }
+        if (userRole == null) {
+            userRole = UserRole.USER;
         }
     }
 

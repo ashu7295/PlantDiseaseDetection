@@ -180,11 +180,17 @@ public class PlantDiseaseController {
         }
     }
 
-    @PutMapping("/user/profile")
+    @PostMapping(value = "/user/profile", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/user/profile", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateUserProfile(@RequestBody Map<String, Object> updates) {
         try {
+            logger.info("Received profile update request with data: {}", updates);
+            
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            logger.info("Authentication: {}, isAuthenticated: {}", auth, auth != null ? auth.isAuthenticated() : "null");
+            
             if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getName())) {
+                logger.warn("User not authenticated");
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of(
                         "status", "error",
@@ -193,7 +199,10 @@ public class PlantDiseaseController {
             }
             
             User user = userService.findByEmail(auth.getName());
+            logger.info("Found user: {}", user != null ? user.getEmail() : "null");
+            
             if (user == null) {
+                logger.warn("User not found in database");
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of(
                         "status", "error",
@@ -202,26 +211,75 @@ public class PlantDiseaseController {
             }
             
             // Update user fields
-            if (updates.containsKey("name")) user.setName((String) updates.get("name"));
-            if (updates.containsKey("phoneNumber")) user.setPhoneNumber((String) updates.get("phoneNumber"));
-            if (updates.containsKey("address")) user.setAddress((String) updates.get("address"));
-            if (updates.containsKey("city")) user.setCity((String) updates.get("city"));
-            if (updates.containsKey("state")) user.setState((String) updates.get("state"));
-            if (updates.containsKey("postalCode")) user.setPostalCode((String) updates.get("postalCode"));
-            if (updates.containsKey("country")) user.setCountry((String) updates.get("country"));
-            if (updates.containsKey("profilePicture")) user.setProfilePicture((String) updates.get("profilePicture"));
+            logger.info("Updating user fields...");
+            if (updates.containsKey("name")) {
+                logger.info("Updating name from '{}' to '{}'", user.getName(), updates.get("name"));
+                user.setName((String) updates.get("name"));
+            }
+            if (updates.containsKey("phoneNumber")) {
+                logger.info("Updating phoneNumber from '{}' to '{}'", user.getPhoneNumber(), updates.get("phoneNumber"));
+                user.setPhoneNumber((String) updates.get("phoneNumber"));
+            }
+            if (updates.containsKey("address")) {
+                logger.info("Updating address from '{}' to '{}'", user.getAddress(), updates.get("address"));
+                user.setAddress((String) updates.get("address"));
+            }
+            if (updates.containsKey("city")) {
+                logger.info("Updating city from '{}' to '{}'", user.getCity(), updates.get("city"));
+                user.setCity((String) updates.get("city"));
+            }
+            if (updates.containsKey("state")) {
+                logger.info("Updating state from '{}' to '{}'", user.getState(), updates.get("state"));
+                user.setState((String) updates.get("state"));
+            }
+            if (updates.containsKey("postalCode")) {
+                logger.info("Updating postalCode from '{}' to '{}'", user.getPostalCode(), updates.get("postalCode"));
+                user.setPostalCode((String) updates.get("postalCode"));
+            }
+            if (updates.containsKey("country")) {
+                logger.info("Updating country from '{}' to '{}'", user.getCountry(), updates.get("country"));
+                user.setCountry((String) updates.get("country"));
+            }
+            if (updates.containsKey("profilePicture")) {
+                logger.info("Updating profilePicture");
+                user.setProfilePicture((String) updates.get("profilePicture"));
+            }
 
             // Save user
+            logger.info("Saving updated user...");
             User savedUser = userService.saveUser(user);
-            logger.info("User profile updated successfully for: {}", savedUser.getEmail());
             
-            return ResponseEntity.ok(Map.of("status", "success", "message", "Profile updated successfully"));
+            // Get user's analysis stats
+            Map<String, Object> stats = analysisService.getUserAnalysisStats(savedUser);
+            
+            // Create response with updated profile data
+            Map<String, Object> profile = new HashMap<>();
+            profile.put("name", savedUser.getName());
+            profile.put("email", savedUser.getEmail());
+            profile.put("joinDate", savedUser.getCreatedAt());
+            profile.put("phoneNumber", savedUser.getPhoneNumber());
+            profile.put("address", savedUser.getAddress());
+            profile.put("city", savedUser.getCity());
+            profile.put("state", savedUser.getState());
+            profile.put("postalCode", savedUser.getPostalCode());
+            profile.put("country", savedUser.getCountry());
+            profile.put("profilePicture", savedUser.getProfilePicture());
+            profile.put("userRole", savedUser.getUserRole());
+            profile.put("stats", stats);
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "success");
+            response.put("message", "Profile updated successfully");
+            response.put("profile", profile);
+            
+            logger.info("Profile updated successfully for user: {}", savedUser.getEmail());
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             logger.error("Error updating user profile", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of(
                     "status", "error",
-                    "message", "Error updating user profile: " + e.getMessage()
+                    "message", "Error updating profile: " + e.getMessage()
                 ));
         }
     }

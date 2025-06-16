@@ -68,11 +68,11 @@
                     <div class="dropdown">
                         <button class="btn btn-link nav-link dropdown-toggle d-flex align-items-center p-2" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="color: #495057 !important; border: none; background: none;">
                             <div class="profile-avatar me-2" style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #198754 0%, #20c997 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 0.9rem; font-weight: 600;">
-                                <span id="userInitials">G</span>
+                                <span id="userInitials" th:text="${user != null and user.name != null ? user.name.substring(0,1).toUpperCase() : 'N'}">G</span>
                             </div>
                             <div class="d-none d-md-block text-start">
-                                <div class="fw-semibold" style="font-size: 0.9rem; line-height: 1.2;" id="userNameDisplay">Guest</div>
-                                <div class="text-muted" style="font-size: 0.75rem; line-height: 1.2;" id="userRoleDisplay">Loading...</div>
+                                <div class="fw-semibold" style="font-size: 0.9rem; line-height: 1.2;" id="userNameDisplay" th:text="${user != null ? (user.name != null ? user.name : 'Logged in') : 'Logged in'}"></div>
+                                <div class="text-muted" style="font-size: 0.75rem; line-height: 1.2;" id="userRoleDisplay" th:text="${user != null ? (user.userRole != null ? user.userRole : 'USER') : 'USER'}"></div>
                             </div>
                             <i class="fas fa-chevron-down ms-2" style="font-size: 0.7rem; color: #6c757d;"></i>
                         </button>
@@ -82,15 +82,15 @@
                             <li class="px-3 py-3" style="border-bottom: 1px solid #f8f9fa;">
                                 <div class="d-flex align-items-center">
                                     <div class="profile-avatar-large me-3" style="width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, #198754 0%, #20c997 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem; font-weight: 600;">
-                                        <span id="dropdownUserInitials">G</span>
+                                        <span id="dropdownUserInitials" th:text="${user != null ? (user.name != null ? user.name.substring(0,1).toUpperCase() : 'L') : 'L'}"></span>
                                     </div>
                                     <div class="flex-grow-1">
-                                        <div class="fw-semibold" style="font-size: 1rem; color: #212529;" id="dropdownUserName">Guest</div>
-                                        <div class="text-muted" style="font-size: 0.85rem;" id="dropdownUserEmail">Not logged in</div>
+                                        <div class="fw-semibold" style="font-size: 1rem; color: #212529;" id="dropdownUserName" th:text="${user != null ? (user.name != null ? user.name : 'Logged in') : 'Logged in'}"></div>
+                                        <div class="text-muted" style="font-size: 0.85rem;" id="dropdownUserEmail" th:text="${user != null ? user.email : ''}"></div>
                                         <div class="d-flex align-items-center mt-1">
                                             <span class="badge bg-success-subtle text-success" style="font-size: 0.7rem; padding: 2px 8px;" id="userStatusBadge">
                                                 <i class="fas fa-circle" style="font-size: 0.5rem; margin-right: 4px;"></i>
-                                                <span id="userStatusText">Loading...</span>
+                                                <span id="userStatusText">Active</span>
                                             </span>
                                         </div>
                                     </div>
@@ -262,8 +262,14 @@
         }
     </style>
     <!-- DASHBOARD NAVBAR DEBUG MARKER -->
-    <script>
+    <script th:inline="javascript">
         document.addEventListener('DOMContentLoaded', function() {
+            // Get the authenticated user's name from Thymeleaf
+            const authenticatedUser = /*[[${#authentication.principal}]]*/ null;
+            const defaultName = authenticatedUser ? authenticatedUser.name : 'Guest User';
+            const defaultEmail = authenticatedUser ? authenticatedUser.email : 'Not logged in';
+            const defaultRole = authenticatedUser ? authenticatedUser.userRole : 'USER';
+            
             // Load user data and stats
             loadUserData();
             loadNotifications();
@@ -294,22 +300,65 @@
                         const profile = await profileResponse.json();
                         console.log('Profile data received:', profile);
                         
-                        if (profile.status !== 'error') {
-                            updateUserDisplay(profile);
-                        } else {
+                        if (profile.status === 'error') {
                             console.error('Profile API error:', profile.message);
-                            // Set default values for guest user
+                            // Set default values from authenticated user
                             updateUserDisplay({
-                                name: 'Guest User',
-                                email: 'Not logged in',
+                                name: defaultName,
+                                email: defaultEmail,
+                                userRole: defaultRole,
                                 hasActiveSubscription: false
+                            });
+                            return;
+                        }
+                        
+                        // Update all profile displays
+                        updateUserDisplay({
+                            name: profile.name || defaultName,
+                            email: profile.email || defaultEmail,
+                            userRole: profile.userRole || defaultRole,
+                            hasActiveSubscription: profile.hasActiveSubscription || false,
+                            phoneNumber: profile.phoneNumber || 'Not provided',
+                            address: profile.address || 'Not provided',
+                            city: profile.city || 'Not provided',
+                            state: profile.state || 'Not provided',
+                            postalCode: profile.postalCode || 'Not provided',
+                            country: profile.country || 'Not provided'
+                        });
+                        
+                        // Update modal fields if they exist
+                        if (document.getElementById('name')) {
+                            document.getElementById('name').value = profile.name || '';
+                            document.getElementById('email').value = profile.email || '';
+                            document.getElementById('phoneNumber').value = profile.phoneNumber || '';
+                            document.getElementById('address').value = profile.address || '';
+                            document.getElementById('city').value = profile.city || '';
+                            document.getElementById('state').value = profile.state || '';
+                            document.getElementById('postalCode').value = profile.postalCode || '';
+                            document.getElementById('country').value = profile.country || '';
+                        }
+                        
+                        // Update stats if available
+                        if (profile.stats) {
+                            const statsElements = {
+                                'profileTotalAnalyses': profile.stats.totalAnalyses || '0',
+                                'profileHealthyPlants': profile.stats.healthyPlants || '0',
+                                'profileAccuracyRate': (profile.stats.accuracyRate || '0') + '%'
+                            };
+                            
+                            Object.entries(statsElements).forEach(([id, value]) => {
+                                const element = document.getElementById(id);
+                                if (element) {
+                                    element.textContent = value;
+                                }
                             });
                         }
                     } else {
                         console.error('Profile API failed with status:', profileResponse.status);
                         updateUserDisplay({
-                            name: 'Guest User',
-                            email: 'Not logged in',
+                            name: defaultName,
+                            email: defaultEmail,
+                            userRole: defaultRole,
                             hasActiveSubscription: false
                         });
                     }
@@ -324,84 +373,28 @@
                         }
                     });
                     
-                    console.log('Limits response status:', limitsResponse.status);
-                    
                     if (limitsResponse.ok) {
                         const limits = await limitsResponse.json();
-                        console.log('Limits data received:', limits);
-                        
-                        if (!limits.error) {
-                            updateAnalysisStats(limits);
-                        } else {
-                            console.error('Limits API error:', limits.error);
-                            updateAnalysisStats({
-                                freeAnalysesUsed: 0,
-                                freeAnalysesLimit: 10,
-                                remainingFreeAnalyses: 10,
-                                hasActiveSubscription: false
-                            });
-                        }
-                    } else {
-                        console.error('Limits API failed with status:', limitsResponse.status);
-                        updateAnalysisStats({
-                            freeAnalysesUsed: 0,
-                            freeAnalysesLimit: 10,
-                            remainingFreeAnalyses: 10,
-                            hasActiveSubscription: false
-                        });
+                        updateLimitsDisplay(limits);
                     }
-
-                    // Load analysis stats for accuracy
-                    const statsResponse = await fetch('/analysis/api/stats', {
-                        method: 'GET',
-                        credentials: 'include',
-                        headers: {
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json'
-                        }
-                    });
-                    
-                    console.log('Stats response status:', statsResponse.status);
-                    
-                    if (statsResponse.ok) {
-                        const stats = await statsResponse.json();
-                        console.log('Stats data received:', stats);
-                        
-                        if (!stats.error) {
-                            updateAccuracyRate(stats);
-                        } else {
-                            console.error('Stats API error:', stats.error);
-                            updateAccuracyRate({ totalAnalyses: 0 });
-                        }
-                    } else {
-                        console.error('Stats API failed with status:', statsResponse.status);
-                        updateAccuracyRate({ totalAnalyses: 0 });
-                    }
-
                 } catch (error) {
                     console.error('Error loading user data:', error);
-                    // Set default values for guest user
                     updateUserDisplay({
-                        name: 'Guest User',
-                        email: 'Not logged in',
+                        name: defaultName,
+                        email: defaultEmail,
+                        userRole: defaultRole,
                         hasActiveSubscription: false
                     });
-                    updateAnalysisStats({
-                        freeAnalysesUsed: 0,
-                        freeAnalysesLimit: 10,
-                        remainingFreeAnalyses: 10,
-                        hasActiveSubscription: false
-                    });
-                    updateAccuracyRate({ totalAnalyses: 0 });
                 }
             }
 
             function updateUserDisplay(profile) {
-                const name = profile.name || 'Guest User';
-                const email = profile.email || 'Not logged in';
+                const name = profile.name || defaultName;
+                const email = profile.email || defaultEmail;
                 const initials = name.substring(0, 1).toUpperCase();
+                const role = profile.userRole || defaultRole;
 
-                console.log('Updating user display with:', { name, email, initials });
+                console.log('Updating user display with:', { name, email, initials, role });
 
                 // Update all name displays
                 const userNameDisplay = document.getElementById('userNameDisplay');
@@ -409,42 +402,36 @@
                 const dropdownUserEmail = document.getElementById('dropdownUserEmail');
                 const userInitials = document.getElementById('userInitials');
                 const dropdownUserInitials = document.getElementById('dropdownUserInitials');
+                const userRoleDisplay = document.getElementById('userRoleDisplay');
+                const profileModalName = document.getElementById('profileModalName');
+                const profileModalEmail = document.getElementById('profileModalEmail');
+                const profileModalInitials = document.getElementById('profileModalInitials');
+                const profilePhoneDisplay = document.getElementById('profilePhoneDisplay');
+                const profileCityDisplay = document.getElementById('profileCityDisplay');
+                const profileStateDisplay = document.getElementById('profileStateDisplay');
+                const profileAddressDisplay = document.getElementById('profileAddressDisplay');
 
-                if (userNameDisplay) {
-                    userNameDisplay.textContent = name;
-                    console.log('Updated userNameDisplay to:', name);
-                }
-                if (dropdownUserName) {
-                    dropdownUserName.textContent = name;
-                    console.log('Updated dropdownUserName to:', name);
-                }
-                if (dropdownUserEmail) {
-                    dropdownUserEmail.textContent = email;
-                    console.log('Updated dropdownUserEmail to:', email);
-                }
-                if (userInitials) {
-                    userInitials.textContent = initials;
-                    console.log('Updated userInitials to:', initials);
-                }
-                if (dropdownUserInitials) {
-                    dropdownUserInitials.textContent = initials;
-                    console.log('Updated dropdownUserInitials to:', initials);
-                }
+                // Update navbar elements
+                if (userNameDisplay) userNameDisplay.textContent = name;
+                if (dropdownUserName) dropdownUserName.textContent = name;
+                if (dropdownUserEmail) dropdownUserEmail.textContent = email;
+                if (userInitials) userInitials.textContent = initials;
+                if (dropdownUserInitials) dropdownUserInitials.textContent = initials;
+                if (userRoleDisplay) userRoleDisplay.textContent = role;
+
+                // Update profile modal elements
+                if (profileModalName) profileModalName.textContent = name;
+                if (profileModalEmail) profileModalEmail.textContent = email;
+                if (profileModalInitials) profileModalInitials.textContent = initials;
+                if (profilePhoneDisplay) profilePhoneDisplay.textContent = profile.phoneNumber || 'Not provided';
+                if (profileCityDisplay) profileCityDisplay.textContent = profile.city || 'Not provided';
+                if (profileStateDisplay) profileStateDisplay.textContent = profile.state || 'Not provided';
+                if (profileAddressDisplay) profileAddressDisplay.textContent = profile.address || 'Not provided';
 
                 // Update role/status
                 const hasSubscription = profile.hasActiveSubscription || false;
-                const roleDisplay = document.getElementById('userRoleDisplay');
                 const statusBadge = document.getElementById('userStatusBadge');
                 const statusText = document.getElementById('userStatusText');
-
-                if (roleDisplay) {
-                    if (hasSubscription) {
-                        roleDisplay.textContent = 'Premium Member';
-                    } else {
-                        roleDisplay.textContent = 'Free Member';
-                    }
-                    console.log('Updated roleDisplay to:', roleDisplay.textContent);
-                }
 
                 if (statusBadge && statusText) {
                     if (hasSubscription) {
@@ -454,7 +441,6 @@
                         statusBadge.className = 'badge bg-success-subtle text-success';
                         statusText.textContent = 'Active';
                     }
-                    console.log('Updated status to:', statusText.textContent);
                 }
             }
 
